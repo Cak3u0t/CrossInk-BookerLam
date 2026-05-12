@@ -26,6 +26,7 @@
 #include "MappedInputManager.h"
 #include "OpdsServerStore.h"
 #include "RecentBooksStore.h"
+#include "SdCardFontSystem.h"
 #include "activities/Activity.h"
 #include "activities/ActivityManager.h"
 #include "activities/reader/KOReaderSyncActivity.h"
@@ -33,6 +34,9 @@
 #include "activities/settings/SdFirmwareUpdateActivity.h"
 #include "components/UITheme.h"
 #include "fontIds.h"
+#ifdef SIMULATOR
+#include "simulator/SimulatorSmokeTest.h"
+#endif
 #include "util/ButtonNavigator.h"
 #include "util/ScreenshotUtil.h"
 
@@ -40,7 +44,8 @@ MappedInputManager mappedInputManager(gpio);
 GfxRenderer renderer(display);
 ActivityManager activityManager(renderer, mappedInputManager);
 FontDecompressor fontDecompressor;
-FontCacheManager fontCacheManager(renderer.getFontMap());
+SdCardFontSystem sdFontSystem;
+FontCacheManager fontCacheManager(renderer.getFontMap(), renderer.getSdCardFonts());
 
 // Fonts
 #ifndef OMIT_TEENSY_FONT
@@ -331,8 +336,14 @@ bool startGlobalSyncProgress() {
     spineIndex = 0;
   }
 
-  activityManager.pushActivity(std::make_unique<KOReaderSyncActivity>(renderer, mappedInputManager, epub, epubPath,
-                                                                      spineIndex, pageNumber, totalPagesInSpine));
+  CrossPointPosition localPos = {spineIndex, pageNumber, totalPagesInSpine};
+  KOReaderPosition localKoPos = ProgressMapper::toKOReader(epub, localPos);
+  const int tocIdx = epub->getTocIndexForSpineIndex(spineIndex);
+  std::string localChapterName = (tocIdx >= 0) ? epub->getTocItem(tocIdx).title : "";
+
+  activityManager.pushActivity(
+      std::make_unique<KOReaderSyncActivity>(renderer, mappedInputManager, epubPath, spineIndex, pageNumber,
+                                             totalPagesInSpine, std::move(localKoPos), std::move(localChapterName)));
   return true;
 }
 
@@ -425,6 +436,8 @@ void enterDeepSleep() {
   powerManager.startDeepSleep(gpio);
 }
 
+void ensureSdFontLoaded() { sdFontSystem.ensureLoaded(renderer); }
+
 void setupDisplayAndFonts() {
   display.begin();
   renderer.begin();
@@ -497,6 +510,10 @@ void setupDisplayAndFonts() {
   renderer.insertFont(UI_10_FONT_ID, ui10FontFamily);
   renderer.insertFont(UI_12_FONT_ID, ui12FontFamily);
   renderer.insertFont(SMALL_FONT_ID, smallFontFamily);
+
+  // Discover and load SD card fonts
+  sdFontSystem.begin(renderer);
+
   LOG_DBG("MAIN", "Fonts setup");
 }
 
@@ -678,6 +695,14 @@ void loop() {
     screenshotComboActive = false;
   }
 
+#ifdef SIMULATOR
+  if (gpio.consumeSimulatorSleepRequest()) {
+    enterDeepSleep();
+    lastActivityTime = millis();
+    return;
+  }
+#endif
+
   const unsigned long sleepTimeoutMs = SETTINGS.getSleepTimeoutMs();
   if (millis() - lastActivityTime >= sleepTimeoutMs) {
     LOG_DBG("SLP", "Auto-sleep triggered after %lu ms of inactivity", sleepTimeoutMs);
@@ -703,6 +728,10 @@ void loop() {
   const unsigned long activityStartTime = millis();
   activityManager.loop();
   const unsigned long activityDuration = millis() - activityStartTime;
+
+#ifdef SIMULATOR
+  runSimulatorSmokeTestTick();
+#endif
 
   const unsigned long loopDuration = millis() - loopStartTime;
   if (loopDuration > maxLoopDuration) {
