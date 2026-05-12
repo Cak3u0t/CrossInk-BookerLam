@@ -102,16 +102,17 @@ class CrossPointSettings {
   };
 
   // Font family options
-  enum FONT_FAMILY { LEXENDDECA = 0, BITTER = 1, CHAREINK = 2, FONT_FAMILY_COUNT };
+  enum FONT_FAMILY { LEXENDDECA = 0, BOOKERLY = 1, BOOKERLAM = 2, FONT_FAMILY_COUNT };
   // Font size options
   enum FONT_SIZE {
     TINY = 0,
     SMALL = 1,
     MEDIUM = 2,
-    LARGE = 3,
-    EXTRA_LARGE = 4,
-    TEENSY = 5,
-    HUGE_SIZE = 6,
+    EXTRA_MEDIUM = 3,
+    LARGE = 4,
+    EXTRA_LARGE = 5,
+    TEENSY = 6,
+    HUGE_SIZE = 7,
     FONT_SIZE_COUNT
   };
   enum LINE_COMPRESSION { TIGHT = 0, NORMAL = 1, WIDE = 2, LINE_COMPRESSION_COUNT };

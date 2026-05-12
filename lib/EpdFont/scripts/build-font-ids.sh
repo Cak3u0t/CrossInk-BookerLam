@@ -59,6 +59,8 @@ reading_font_id LEXENDDECA_12_FONT_ID \
   ./lexenddeca_12_regular.h ./lexenddeca_12_bold.h ./lexenddeca_12_bolditalic.h ./lexenddeca_12_italic.h
 reading_font_id LEXENDDECA_14_FONT_ID \
   ./lexenddeca_14_regular.h ./lexenddeca_14_bold.h ./lexenddeca_14_bolditalic.h ./lexenddeca_14_italic.h
+reading_font_id LEXENDDECA_15_FONT_ID \
+  ./lexenddeca_15_regular.h ./lexenddeca_15_bold.h ./lexenddeca_15_bolditalic.h ./lexenddeca_15_italic.h
 reading_font_id LEXENDDECA_16_FONT_ID \
   ./lexenddeca_16_regular.h ./lexenddeca_16_bold.h ./lexenddeca_16_bolditalic.h ./lexenddeca_16_italic.h
 reading_font_id LEXENDDECA_18_FONT_ID \
@@ -66,35 +68,39 @@ reading_font_id LEXENDDECA_18_FONT_ID \
 reading_font_id LEXENDDECA_20_FONT_ID \
   ./lexenddeca_20_regular.h ./lexenddeca_20_bold.h ./lexenddeca_20_bolditalic.h ./lexenddeca_20_italic.h
 
-reading_font_id CHAREINK_8_FONT_ID \
-  ./charein_8_regular.h ./charein_8_bold.h ./charein_8_bolditalic.h ./charein_8_italic.h
-reading_font_id CHAREINK_10_FONT_ID \
-  ./charein_10_regular.h ./charein_10_bold.h ./charein_10_bolditalic.h ./charein_10_italic.h
-reading_font_id CHAREINK_12_FONT_ID \
-  ./charein_12_regular.h ./charein_12_bold.h ./charein_12_bolditalic.h ./charein_12_italic.h
-reading_font_id CHAREINK_14_FONT_ID \
-  ./charein_14_regular.h ./charein_14_bold.h ./charein_14_bolditalic.h ./charein_14_italic.h
-reading_font_id CHAREINK_16_FONT_ID \
-  ./charein_16_regular.h ./charein_16_bold.h ./charein_16_bolditalic.h ./charein_16_italic.h
-reading_font_id CHAREINK_18_FONT_ID \
-  ./charein_18_regular.h ./charein_18_bold.h ./charein_18_bolditalic.h ./charein_18_italic.h
-reading_font_id CHAREINK_20_FONT_ID \
-  ./charein_20_regular.h ./charein_20_bold.h ./charein_20_bolditalic.h ./charein_20_italic.h
+reading_font_id BOOKERLY_8_FONT_ID \
+  ./bookerly_8_regular.h ./bookerly_8_bold.h ./bookerly_8_bolditalic.h ./bookerly_8_italic.h
+reading_font_id BOOKERLY_10_FONT_ID \
+  ./bookerly_10_regular.h ./bookerly_10_bold.h ./bookerly_10_bolditalic.h ./bookerly_10_italic.h
+reading_font_id BOOKERLY_12_FONT_ID \
+  ./bookerly_12_regular.h ./bookerly_12_bold.h ./bookerly_12_bolditalic.h ./bookerly_12_italic.h
+reading_font_id BOOKERLY_14_FONT_ID \
+  ./bookerly_14_regular.h ./bookerly_14_bold.h ./bookerly_14_bolditalic.h ./bookerly_14_italic.h
+reading_font_id BOOKERLY_15_FONT_ID \
+  ./bookerly_15_regular.h ./bookerly_15_bold.h ./bookerly_15_bolditalic.h ./bookerly_15_italic.h
+reading_font_id BOOKERLY_16_FONT_ID \
+  ./bookerly_16_regular.h ./bookerly_16_bold.h ./bookerly_16_bolditalic.h ./bookerly_16_italic.h
+reading_font_id BOOKERLY_18_FONT_ID \
+  ./bookerly_18_regular.h ./bookerly_18_bold.h ./bookerly_18_bolditalic.h ./bookerly_18_italic.h
+reading_font_id BOOKERLY_20_FONT_ID \
+  ./bookerly_20_regular.h ./bookerly_20_bold.h ./bookerly_20_bolditalic.h ./bookerly_20_italic.h
 
-reading_font_id BITTER_8_FONT_ID \
-  ./bitter_8_regular.h ./bitter_8_bold.h ./bitter_8_bolditalic.h ./bitter_8_italic.h
-reading_font_id BITTER_10_FONT_ID \
-  ./bitter_10_regular.h ./bitter_10_bold.h ./bitter_10_bolditalic.h ./bitter_10_italic.h
-reading_font_id BITTER_12_FONT_ID \
-  ./bitter_12_regular.h ./bitter_12_bold.h ./bitter_12_bolditalic.h ./bitter_12_italic.h
-reading_font_id BITTER_14_FONT_ID \
-  ./bitter_14_regular.h ./bitter_14_bold.h ./bitter_14_bolditalic.h ./bitter_14_italic.h
-reading_font_id BITTER_16_FONT_ID \
-  ./bitter_16_regular.h ./bitter_16_bold.h ./bitter_16_bolditalic.h ./bitter_16_italic.h
-reading_font_id BITTER_18_FONT_ID \
-  ./bitter_18_regular.h ./bitter_18_bold.h ./bitter_18_bolditalic.h ./bitter_18_italic.h
-reading_font_id BITTER_20_FONT_ID \
-  ./bitter_20_regular.h ./bitter_20_bold.h ./bitter_20_bolditalic.h ./bitter_20_italic.h
+reading_font_id BOOKERLAM_8_FONT_ID \
+  ./bookerlam_8_regular.h ./bookerlam_8_bold.h ./bookerlam_8_bolditalic.h ./bookerlam_8_italic.h
+reading_font_id BOOKERLAM_10_FONT_ID \
+  ./bookerlam_10_regular.h ./bookerlam_10_bold.h ./bookerlam_10_bolditalic.h ./bookerlam_10_italic.h
+reading_font_id BOOKERLAM_12_FONT_ID \
+  ./bookerlam_12_regular.h ./bookerlam_12_bold.h ./bookerlam_12_bolditalic.h ./bookerlam_12_italic.h
+reading_font_id BOOKERLAM_14_FONT_ID \
+  ./bookerlam_14_regular.h ./bookerlam_14_bold.h ./bookerlam_14_bolditalic.h ./bookerlam_14_italic.h
+reading_font_id BOOKERLAM_15_FONT_ID \
+  ./bookerlam_15_regular.h ./bookerlam_15_bold.h ./bookerlam_15_bolditalic.h ./bookerlam_15_italic.h
+reading_font_id BOOKERLAM_16_FONT_ID \
+  ./bookerlam_16_regular.h ./bookerlam_16_bold.h ./bookerlam_16_bolditalic.h ./bookerlam_16_italic.h
+reading_font_id BOOKERLAM_18_FONT_ID \
+  ./bookerlam_18_regular.h ./bookerlam_18_bold.h ./bookerlam_18_bolditalic.h ./bookerlam_18_italic.h
+reading_font_id BOOKERLAM_20_FONT_ID \
+  ./bookerlam_20_regular.h ./bookerlam_20_bold.h ./bookerlam_20_bolditalic.h ./bookerlam_20_italic.h
 
 # UI fonts — no emoji variant
 echo "#define UI_10_FONT_ID ($(hash_files ./ubuntu_10_regular.h ./ubuntu_10_bold.h))"

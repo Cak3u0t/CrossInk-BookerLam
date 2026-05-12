@@ -33,11 +33,11 @@ constexpr char LANG_FILE_BIN[] = "/.crosspoint/language.bin";
 constexpr char LANG_FILE_BAK[] = "/.crosspoint/language.bin.bak";
 constexpr uint8_t INVALID_READER_FONT_SIZE = 0xFF;
 constexpr CrossPointSettings::FONT_SIZE READER_FONT_SIZE_STORAGE_ORDER[] = {
-    CrossPointSettings::TINY,     CrossPointSettings::SMALL,       CrossPointSettings::MEDIUM,
+    CrossPointSettings::TINY,     CrossPointSettings::SMALL,       CrossPointSettings::MEDIUM,   CrossPointSettings::EXTRA_MEDIUM,
     CrossPointSettings::LARGE,    CrossPointSettings::EXTRA_LARGE, CrossPointSettings::TEENSY,
     CrossPointSettings::HUGE_SIZE};
 constexpr CrossPointSettings::FONT_SIZE READER_FONT_SIZE_CYCLE_ORDER[] = {
-    CrossPointSettings::TEENSY,   CrossPointSettings::TINY,  CrossPointSettings::SMALL,
+    CrossPointSettings::TEENSY,   CrossPointSettings::TINY,  CrossPointSettings::SMALL,    CrossPointSettings::EXTRA_MEDIUM,
     CrossPointSettings::MEDIUM,   CrossPointSettings::LARGE, CrossPointSettings::EXTRA_LARGE,
     CrossPointSettings::HUGE_SIZE};
 
@@ -74,6 +74,7 @@ bool isReaderFontSizeAvailable(const CrossPointSettings::FONT_SIZE size) {
       return true;
 #endif
     case CrossPointSettings::MEDIUM:
+    case CrossPointSettings::EXTRA_MEDIUM:
     case CrossPointSettings::LARGE:
     default:
       return true;
@@ -331,7 +332,7 @@ float CrossPointSettings::getReaderLineCompression() const {
         case WIDE:
           return 1.2f;
       }
-    case CHAREINK:
+    case BOOKERLY:
       switch (lineSpacing) {
         case TIGHT:
           return 0.95f;
@@ -341,18 +342,35 @@ float CrossPointSettings::getReaderLineCompression() const {
         case WIDE:
           return 1.3f;
       }
-    case BITTER:
+    case BOOKERLAM:
       switch (lineSpacing) {
         case TIGHT:
-          return 0.95f;
+          return 0.9f;
         case NORMAL:
         default:
-          return 1.1f;
+          return 1.0f;
         case WIDE:
-          return 1.3f;
+          return 1.2f;
       }
   }
 }
+
+// static constexpr float compressionTable[][3] = {
+//   // TIGHT NORMAL WIDE
+//
+//   // LEXENDDECA
+//   {0.90f, 1.0f, 1.2f},
+//
+//   // BOOKERLY
+//   {0.95f, 1.1f, 1.3f},
+//
+//   // BOOKERLAM
+//   {0.90f, 1.0f, 1.2f},
+// };
+//
+// float CrossPointSettings::getReaderLineCompression() const {
+//   return compressionTable[fontFamily][lineSpacing];
+// }
 
 unsigned long CrossPointSettings::getSleepTimeoutMs() const {
   switch (sleepTimeout) {
@@ -457,6 +475,8 @@ int CrossPointSettings::getReaderFontId() const {
         case MEDIUM:
         default:
           return LEXENDDECA_14_FONT_ID;
+        case EXTRA_MEDIUM:
+          return LEXENDDECA_15_FONT_ID;
         case LARGE:
           return LEXENDDECA_16_FONT_ID;
 #ifndef OMIT_XLARGE_FONT
@@ -468,61 +488,191 @@ int CrossPointSettings::getReaderFontId() const {
           return LEXENDDECA_20_FONT_ID;
 #endif
       }
-    case CHAREINK:
+    case BOOKERLY:
       switch (effectiveSize) {
 #ifndef OMIT_TEENSY_FONT
         case TEENSY:
-          return CHAREINK_8_FONT_ID;
+          return BOOKERLY_8_FONT_ID;
 #endif
 #ifndef OMIT_TINY_FONT
         case TINY:
-          return CHAREINK_10_FONT_ID;
+          return BOOKERLY_10_FONT_ID;
 #endif
 #ifndef OMIT_SMALL_FONT
         case SMALL:
-          return CHAREINK_12_FONT_ID;
+          return BOOKERLY_12_FONT_ID;
 #endif
         case MEDIUM:
         default:
-          return CHAREINK_14_FONT_ID;
+          return BOOKERLY_14_FONT_ID;
+        case EXTRA_MEDIUM:
+          return BOOKERLY_15_FONT_ID;
         case LARGE:
-          return CHAREINK_16_FONT_ID;
+          return BOOKERLY_16_FONT_ID;
 #ifndef OMIT_XLARGE_FONT
         case EXTRA_LARGE:
-          return CHAREINK_18_FONT_ID;
+          return BOOKERLY_18_FONT_ID;
 #endif
 #ifndef OMIT_HUGE_FONT
         case HUGE_SIZE:
-          return CHAREINK_20_FONT_ID;
+          return BOOKERLY_20_FONT_ID;
 #endif
       }
-    case BITTER:
+    case BOOKERLAM:
       switch (effectiveSize) {
 #ifndef OMIT_TEENSY_FONT
         case TEENSY:
-          return BITTER_8_FONT_ID;
+          return BOOKERLAM_8_FONT_ID;
 #endif
 #ifndef OMIT_TINY_FONT
         case TINY:
-          return BITTER_10_FONT_ID;
+          return BOOKERLAM_10_FONT_ID;
 #endif
 #ifndef OMIT_SMALL_FONT
         case SMALL:
-          return BITTER_12_FONT_ID;
+          return BOOKERLAM_12_FONT_ID;
 #endif
         case MEDIUM:
         default:
-          return BITTER_14_FONT_ID;
+          return BOOKERLAM_14_FONT_ID;
+        case EXTRA_MEDIUM:
+          return BOOKERLAM_15_FONT_ID;
         case LARGE:
-          return BITTER_16_FONT_ID;
+          return BOOKERLAM_16_FONT_ID;
 #ifndef OMIT_XLARGE_FONT
         case EXTRA_LARGE:
-          return BITTER_18_FONT_ID;
+          return BOOKERLAM_18_FONT_ID;
 #endif
 #ifndef OMIT_HUGE_FONT
         case HUGE_SIZE:
-          return BITTER_20_FONT_ID;
+          return BOOKERLAM_20_FONT_ID;
 #endif
       }
   }
 }
+
+// #define INVALID_FONT_ID -1
+// static constexpr int fontTable[][7] = {
+//
+//   // TEENSY TINY SMALL MEDIUM LARGE XL HUGE
+//
+//   // LEXENDDECA
+//   {
+//     #ifdef OMIT_TEENSY_FONT
+//     INVALID_FONT_ID,
+//     #else
+//     LEXENDDECA_8_FONT_ID,
+//     #endif
+//
+//     #ifdef OMIT_TINY_FONT
+//     INVALID_FONT_ID,
+//     #else
+//     LEXENDDECA_10_FONT_ID,
+//     #endif
+//
+//     #ifdef OMIT_SMALL_FONT
+//     INVALID_FONT_ID,
+//     #else
+//     LEXENDDECA_12_FONT_ID,
+//     #endif
+//
+//     LEXENDDECA_14_FONT_ID,
+//     LEXENDDECA_16_FONT_ID,
+//
+//     #ifdef OMIT_XLARGE_FONT
+//     INVALID_FONT_ID,
+//     #else
+//     LEXENDDECA_18_FONT_ID,
+//     #endif
+//
+//     #ifdef OMIT_HUGE_FONT
+//     INVALID_FONT_ID,
+//     #else
+//     LEXENDDECA_20_FONT_ID,
+//     #endif
+//   },
+//
+//   // CHAREINK
+//   {
+//     #ifdef OMIT_TEENSY_FONT
+//     INVALID_FONT_ID,
+//     #else
+//     CHAREINK_8_FONT_ID,
+//     #endif
+//
+//     #ifdef OMIT_TINY_FONT
+//     INVALID_FONT_ID,
+//     #else
+//     CHAREINK_10_FONT_ID,
+//     #endif
+//
+//     #ifdef OMIT_SMALL_FONT
+//     INVALID_FONT_ID,
+//     #else
+//     CHAREINK_12_FONT_ID,
+//     #endif
+//
+//     CHAREINK_14_FONT_ID,
+//     CHAREINK_16_FONT_ID,
+//
+//     #ifdef OMIT_XLARGE_FONT
+//     INVALID_FONT_ID,
+//     #else
+//     CHAREINK_18_FONT_ID,
+//     #endif
+//
+//     #ifdef OMIT_HUGE_FONT
+//     INVALID_FONT_ID,
+//     #else
+//     CHAREINK_20_FONT_ID,
+//     #endif
+//   },
+//
+//   // BITTER
+//   {
+//     #ifdef OMIT_TEENSY_FONT
+//     INVALID_FONT_ID,
+//     #else
+//     BITTER_8_FONT_ID,
+//     #endif
+//
+//     #ifdef OMIT_TINY_FONT
+//     INVALID_FONT_ID,
+//     #else
+//     BITTER_10_FONT_ID,
+//     #endif
+//
+//     #ifdef OMIT_SMALL_FONT
+//     INVALID_FONT_ID,
+//     #else
+//     BITTER_12_FONT_ID,
+//     #endif
+//
+//     BITTER_14_FONT_ID,
+//     BITTER_16_FONT_ID,
+//
+//     #ifdef OMIT_XLARGE_FONT
+//     INVALID_FONT_ID,
+//     #else
+//     BITTER_18_FONT_ID,
+//     #endif
+//
+//     #ifdef OMIT_HUGE_FONT
+//     INVALID_FONT_ID,
+//     #else
+//     BITTER_20_FONT_ID,
+//     #endif
+//   }
+// };
+//
+// int CrossPointSettings::getReaderFontId() const {
+//   const FONT_SIZE effectiveSize = getEffectiveReaderFontSize();
+//
+//   int id = fontTable[fontFamily][effectiveSize];
+//
+//   if (id == INVALID_FONT_ID) {
+//     return fontTable[LEXENDDECA][MEDIUM];
+//   }
+//
+//   return id;
+// }

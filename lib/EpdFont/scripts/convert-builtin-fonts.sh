@@ -127,7 +127,7 @@ PHM_FALLBACK_RANGES=(
   0x91CA,0x91CA
 )
 
-READING_FONT_SIZES=(8 10 12 14 16 18 20)
+READING_FONT_SIZES=(8 10 12 14 15 16 18 20)
 READING_FONT_STYLES=("Regular" "Bold" "Italic" "BoldItalic")
 READING_FONT_RENDER_ARGS=(--2bit --compress --pnum --darken-aa)
 
@@ -193,6 +193,8 @@ generate_reading_variant() {
   echo "Generating ${label} font variants..."
   generate_family lexenddeca LexendDeca LexendDeca "$output_dir" "$include_emoji" "$include_phm" yes
   generate_family bitter Bitter Bitter "$output_dir" "$include_emoji" "$include_phm" yes
+  generate_family bookerlam BookerLam BookerLam "$output_dir" "$include_emoji" "$include_phm" yes
+  generate_family bookerly Bookerly Bookerly "$output_dir" "$include_emoji" "$include_phm" yes
   generate_family charein ChareInk7 ChareInk7 "$output_dir" "$include_emoji" "$include_phm" no
   echo ""
   echo "${label} variants complete."
