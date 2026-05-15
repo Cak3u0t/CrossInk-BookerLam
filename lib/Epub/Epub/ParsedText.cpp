@@ -24,6 +24,7 @@ constexpr size_t SD_FONT_PREFLIGHT_JOIN_LIMIT = 4096;
 constexpr size_t SD_FONT_PREFLIGHT_SAMPLE_BYTES = 255;
 constexpr uint32_t SD_FONT_PREFLIGHT_MIN_FREE = 64 * 1024;
 constexpr uint32_t SD_FONT_PREFLIGHT_MIN_MAX_ALLOC = 32 * 1024;
+// const int extraIndent = renderer.getLineHeight(fontId) / 2;
 
 // Returns the first rendered codepoint of a word (skipping leading soft hyphens).
 uint32_t firstCodepoint(const std::string& word) {
@@ -412,7 +413,7 @@ std::vector<size_t> ParsedText::computeLineBreaks(const GfxRenderer& renderer, c
       blockStyle.textIndentDefined && (blockStyle.textIndent < 0 || !extraParagraphSpacing || forceParagraphIndents) &&
               (blockStyle.alignment == CssTextAlign::Justify || blockStyle.alignment == CssTextAlign::Left ||
                blockStyle.alignment == CssTextAlign::None)
-          ? blockStyle.textIndent
+          ? blockStyle.textIndent + 20
           : 0;
 
   // Ensure any word that would overflow even as the first entry on a line is split using fallback hyphenation.
@@ -547,7 +548,7 @@ std::vector<size_t> ParsedText::computeHyphenatedLineBreaks(const GfxRenderer& r
       blockStyle.textIndentDefined && (blockStyle.textIndent < 0 || !extraParagraphSpacing || forceParagraphIndents) &&
               (blockStyle.alignment == CssTextAlign::Justify || blockStyle.alignment == CssTextAlign::Left ||
                blockStyle.alignment == CssTextAlign::None)
-          ? blockStyle.textIndent
+          ? blockStyle.textIndent + 20
           : 0;
 
   std::vector<size_t> lineBreakIndices;
@@ -785,7 +786,7 @@ void ParsedText::extractLine(const size_t breakIndex, const int pageWidth, const
               (blockStyle.textIndent < 0 || !extraParagraphSpacing || forceParagraphIndents) &&
               (blockStyle.alignment == CssTextAlign::Justify || blockStyle.alignment == CssTextAlign::Left ||
                blockStyle.alignment == CssTextAlign::None)
-          ? blockStyle.textIndent
+          ? blockStyle.textIndent + 20
           : 0;
 
   // Calculate total word width for this line, count actual word gaps,

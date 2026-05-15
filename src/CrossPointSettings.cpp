@@ -81,6 +81,13 @@ bool isReaderFontSizeAvailable(const CrossPointSettings::FONT_SIZE size) {
   }
 }
 
+CrossPointSettings::FONT_SIZE firstAvailableReaderFontSize() {
+  for (const CrossPointSettings::FONT_SIZE size : READER_FONT_SIZE_STORAGE_ORDER) {
+    if (isReaderFontSizeAvailable(size)) return size;
+  }
+  return CrossPointSettings::LARGE;
+}
+
 // Convert legacy front button layout into explicit logical->hardware mapping.
 void applyLegacyFrontButtonLayout(CrossPointSettings& settings) {
   switch (static_cast<CrossPointSettings::FRONT_BUTTON_LAYOUT>(settings.frontButtonLayout)) {
@@ -143,6 +150,22 @@ void CrossPointSettings::validateReaderFrontButtonMapping(CrossPointSettings& se
         return;
       }
     }
+  }
+}
+
+uint8_t CrossPointSettings::sleepTimeoutEnumToMinutes(const uint8_t legacyValue) {
+  switch (legacyValue) {
+    case SLEEP_1_MIN:
+      return 1;
+    case SLEEP_5_MIN:
+      return 5;
+    case SLEEP_15_MIN:
+      return 15;
+    case SLEEP_30_MIN:
+      return 30;
+    case SLEEP_10_MIN:
+    default:
+      return 10;
   }
 }
 
@@ -253,7 +276,9 @@ bool CrossPointSettings::loadFromBinaryFile() {
     if (++settingsRead >= fileSettingsCount) break;
     readAndValidate(inputFile, paragraphAlignment, PARAGRAPH_ALIGNMENT_COUNT);
     if (++settingsRead >= fileSettingsCount) break;
-    readAndValidate(inputFile, sleepTimeout, SLEEP_TIMEOUT_COUNT);
+    uint8_t legacySleepTimeout = SLEEP_10_MIN;
+    readAndValidate(inputFile, legacySleepTimeout, SLEEP_TIMEOUT_COUNT);
+    sleepTimeoutMinutes = sleepTimeoutEnumToMinutes(legacySleepTimeout);
     if (++settingsRead >= fileSettingsCount) break;
     readAndValidate(inputFile, refreshFrequency, REFRESH_FREQUENCY_COUNT);
     if (++settingsRead >= fileSettingsCount) break;
@@ -377,38 +402,26 @@ float CrossPointSettings::getReaderLineCompression() const {
   }
 }
 
-// static constexpr float compressionTable[][3] = {
-//   // TIGHT NORMAL WIDE
-//
-//   // LEXENDDECA
-//   {0.90f, 1.0f, 1.2f},
-//
-//   // BOOKERLY
-//   {0.95f, 1.1f, 1.3f},
-//
-//   // BOOKERLAM
-//   {0.90f, 1.0f, 1.2f},
-// };
-//
-// float CrossPointSettings::getReaderLineCompression() const {
-//   return compressionTable[fontFamily][lineSpacing];
-// }
-
 unsigned long CrossPointSettings::getSleepTimeoutMs() const {
-  switch (sleepTimeout) {
-    case SLEEP_1_MIN:
-      return 1UL * 60 * 1000;
-    case SLEEP_5_MIN:
-      return 5UL * 60 * 1000;
-    case SLEEP_10_MIN:
-    default:
-      return 10UL * 60 * 1000;
-    case SLEEP_15_MIN:
-      return 15UL * 60 * 1000;
-    case SLEEP_30_MIN:
-      return 30UL * 60 * 1000;
-  }
+  const uint8_t minutes = std::clamp(sleepTimeoutMinutes, MIN_SLEEP_TIMEOUT_MINUTES, MAX_SLEEP_TIMEOUT_MINUTES);
+  return static_cast<unsigned long>(minutes) * 60UL * 1000UL;
 }
+
+#ifdef SIMULATOR
+bool CrossPointSettings::verifySleepTimeoutMigrationContract() {
+  CrossPointSettings& settings = getInstance();
+  const uint8_t originalMinutes = settings.sleepTimeoutMinutes;
+
+  settings.sleepTimeoutMinutes = sleepTimeoutEnumToMinutes(SLEEP_5_MIN);
+  const bool migratedValueDrivesTimeout = settings.getSleepTimeoutMs() == 5UL * 60UL * 1000UL;
+
+  settings.sleepTimeoutMinutes = 12;
+  const bool runtimeUsesMinutesOnly = settings.getSleepTimeoutMs() == 12UL * 60UL * 1000UL;
+
+  settings.sleepTimeoutMinutes = originalMinutes;
+  return migratedValueDrivesTimeout && runtimeUsesMinutesOnly;
+}
+#endif
 
 int CrossPointSettings::getRefreshFrequency() const {
   switch (refreshFrequency) {
@@ -449,7 +462,7 @@ CrossPointSettings::FONT_SIZE CrossPointSettings::getEffectiveReaderFontSize() c
     if (fontSize == stored) return size;
     stored++;
   }
-  return MEDIUM;
+  return firstAvailableReaderFontSize();
 }
 
 bool CrossPointSettings::changeReaderFontSize(const bool larger) {
@@ -580,129 +593,3 @@ int CrossPointSettings::getReaderFontId() const {
       }
   }
 }
-
-// #define INVALID_FONT_ID -1
-// static constexpr int fontTable[][7] = {
-//
-//   // TEENSY TINY SMALL MEDIUM LARGE XL HUGE
-//
-//   // LEXENDDECA
-//   {
-//     #ifdef OMIT_TEENSY_FONT
-//     INVALID_FONT_ID,
-//     #else
-//     LEXENDDECA_8_FONT_ID,
-//     #endif
-//
-//     #ifdef OMIT_TINY_FONT
-//     INVALID_FONT_ID,
-//     #else
-//     LEXENDDECA_10_FONT_ID,
-//     #endif
-//
-//     #ifdef OMIT_SMALL_FONT
-//     INVALID_FONT_ID,
-//     #else
-//     LEXENDDECA_12_FONT_ID,
-//     #endif
-//
-//     LEXENDDECA_14_FONT_ID,
-//     LEXENDDECA_16_FONT_ID,
-//
-//     #ifdef OMIT_XLARGE_FONT
-//     INVALID_FONT_ID,
-//     #else
-//     LEXENDDECA_18_FONT_ID,
-//     #endif
-//
-//     #ifdef OMIT_HUGE_FONT
-//     INVALID_FONT_ID,
-//     #else
-//     LEXENDDECA_20_FONT_ID,
-//     #endif
-//   },
-//
-//   // CHAREINK
-//   {
-//     #ifdef OMIT_TEENSY_FONT
-//     INVALID_FONT_ID,
-//     #else
-//     CHAREINK_8_FONT_ID,
-//     #endif
-//
-//     #ifdef OMIT_TINY_FONT
-//     INVALID_FONT_ID,
-//     #else
-//     CHAREINK_10_FONT_ID,
-//     #endif
-//
-//     #ifdef OMIT_SMALL_FONT
-//     INVALID_FONT_ID,
-//     #else
-//     CHAREINK_12_FONT_ID,
-//     #endif
-//
-//     CHAREINK_14_FONT_ID,
-//     CHAREINK_16_FONT_ID,
-//
-//     #ifdef OMIT_XLARGE_FONT
-//     INVALID_FONT_ID,
-//     #else
-//     CHAREINK_18_FONT_ID,
-//     #endif
-//
-//     #ifdef OMIT_HUGE_FONT
-//     INVALID_FONT_ID,
-//     #else
-//     CHAREINK_20_FONT_ID,
-//     #endif
-//   },
-//
-//   // BITTER
-//   {
-//     #ifdef OMIT_TEENSY_FONT
-//     INVALID_FONT_ID,
-//     #else
-//     BITTER_8_FONT_ID,
-//     #endif
-//
-//     #ifdef OMIT_TINY_FONT
-//     INVALID_FONT_ID,
-//     #else
-//     BITTER_10_FONT_ID,
-//     #endif
-//
-//     #ifdef OMIT_SMALL_FONT
-//     INVALID_FONT_ID,
-//     #else
-//     BITTER_12_FONT_ID,
-//     #endif
-//
-//     BITTER_14_FONT_ID,
-//     BITTER_16_FONT_ID,
-//
-//     #ifdef OMIT_XLARGE_FONT
-//     INVALID_FONT_ID,
-//     #else
-//     BITTER_18_FONT_ID,
-//     #endif
-//
-//     #ifdef OMIT_HUGE_FONT
-//     INVALID_FONT_ID,
-//     #else
-//     BITTER_20_FONT_ID,
-//     #endif
-//   }
-// };
-//
-// int CrossPointSettings::getReaderFontId() const {
-//   const FONT_SIZE effectiveSize = getEffectiveReaderFontSize();
-//
-//   int id = fontTable[fontFamily][effectiveSize];
-//
-//   if (id == INVALID_FONT_ID) {
-//     return fontTable[LEXENDDECA][MEDIUM];
-//   }
-//
-//   return id;
-// }

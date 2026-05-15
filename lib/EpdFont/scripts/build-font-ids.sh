@@ -1,5 +1,3 @@
-#!/bin/bash
-
 set -e
 
 cd "$(dirname "$0")/../builtinFonts"
@@ -16,11 +14,6 @@ hash_files() {
 }
 
 # Emit a reading-font ID define.
-# When the noemoji/ directory exists, emits an #ifdef OMIT_EMOJI_FONTS block so
-# the correct hash is selected at compile time.
-# Usage: reading_font_id DEFINE_NAME file1 [file2 ...]
-#   Files are relative paths from builtinFonts/ (e.g. ./lexenddeca_10_regular.h).
-#   Noemoji counterparts are assumed to live at noemoji/<basename>.
 reading_font_id() {
   local name="$1"; shift
   local files=("$@")
@@ -40,85 +33,45 @@ reading_font_id() {
   fi
 }
 
-# NotoEmoji / NotoSymbols — standalone emoji font IDs (no noemoji variant needed)
-echo "#define NOTOEMOJI_10_FONT_ID ($(hash_files ./notoemoji_10_regular.h))"
-echo "#define NOTOEMOJI_12_FONT_ID ($(hash_files ./notoemoji_12_regular.h))"
-echo "#define NOTOEMOJI_14_FONT_ID ($(hash_files ./notoemoji_14_regular.h))"
-echo "#define NOTOEMOJI_16_FONT_ID ($(hash_files ./notoemoji_16_regular.h))"
-echo "#define NOTOSYMBOLS_10_FONT_ID ($(hash_files ./notosymbols_10_regular.h))"
-echo "#define NOTOSYMBOLS_12_FONT_ID ($(hash_files ./notosymbols_12_regular.h))"
-echo "#define NOTOSYMBOLS_14_FONT_ID ($(hash_files ./notosymbols_14_regular.h))"
-echo "#define NOTOSYMBOLS_16_FONT_ID ($(hash_files ./notosymbols_16_regular.h))"
+# 1. NotoEmoji / NotoSymbols
+for size in 10 12 14 16; do
+  echo "#define NOTOEMOJI_${size}_FONT_ID ($(hash_files ./notoemoji_${size}_regular.h))"
+  echo "#define NOTOSYMBOLS_${size}_FONT_ID ($(hash_files ./notosymbols_${size}_regular.h))"
+done
 
-# Reading fonts - support OMIT_EMOJI_FONTS
-reading_font_id LEXENDDECA_8_FONT_ID \
-  ./lexenddeca_8_regular.h ./lexenddeca_8_bold.h ./lexenddeca_8_bolditalic.h ./lexenddeca_8_italic.h
-reading_font_id LEXENDDECA_10_FONT_ID \
-  ./lexenddeca_10_regular.h ./lexenddeca_10_bold.h ./lexenddeca_10_bolditalic.h ./lexenddeca_10_italic.h
-reading_font_id LEXENDDECA_12_FONT_ID \
-  ./lexenddeca_12_regular.h ./lexenddeca_12_bold.h ./lexenddeca_12_bolditalic.h ./lexenddeca_12_italic.h
-reading_font_id LEXENDDECA_14_FONT_ID \
-  ./lexenddeca_14_regular.h ./lexenddeca_14_bold.h ./lexenddeca_14_bolditalic.h ./lexenddeca_14_italic.h
-reading_font_id LEXENDDECA_15_FONT_ID \
-  ./lexenddeca_15_regular.h ./lexenddeca_15_bold.h ./lexenddeca_15_bolditalic.h ./lexenddeca_15_italic.h
-reading_font_id LEXENDDECA_16_FONT_ID \
-  ./lexenddeca_16_regular.h ./lexenddeca_16_bold.h ./lexenddeca_16_bolditalic.h ./lexenddeca_16_italic.h
-reading_font_id LEXENDDECA_18_FONT_ID \
-  ./lexenddeca_18_regular.h ./lexenddeca_18_bold.h ./lexenddeca_18_bolditalic.h ./lexenddeca_18_italic.h
-reading_font_id LEXENDDECA_20_FONT_ID \
-  ./lexenddeca_20_regular.h ./lexenddeca_20_bold.h ./lexenddeca_20_bolditalic.h ./lexenddeca_20_italic.h
+# 2. Reading fonts (Lexenddeca, Bookerly, Bookerlam)
+# Tạo mảng để lưu danh sách ID cho phần static_assert ở cuối
+font_ids_assert=()
 
-reading_font_id BOOKERLY_8_FONT_ID \
-  ./bookerly_8_regular.h ./bookerly_8_bold.h ./bookerly_8_bolditalic.h ./bookerly_8_italic.h
-reading_font_id BOOKERLY_10_FONT_ID \
-  ./bookerly_10_regular.h ./bookerly_10_bold.h ./bookerly_10_bolditalic.h ./bookerly_10_italic.h
-reading_font_id BOOKERLY_12_FONT_ID \
-  ./bookerly_12_regular.h ./bookerly_12_bold.h ./bookerly_12_bolditalic.h ./bookerly_12_italic.h
-reading_font_id BOOKERLY_14_FONT_ID \
-  ./bookerly_14_regular.h ./bookerly_14_bold.h ./bookerly_14_bolditalic.h ./bookerly_14_italic.h
-reading_font_id BOOKERLY_15_FONT_ID \
-  ./bookerly_15_regular.h ./bookerly_15_bold.h ./bookerly_15_bolditalic.h ./bookerly_15_italic.h
-reading_font_id BOOKERLY_16_FONT_ID \
-  ./bookerly_16_regular.h ./bookerly_16_bold.h ./bookerly_16_bolditalic.h ./bookerly_16_italic.h
-reading_font_id BOOKERLY_18_FONT_ID \
-  ./bookerly_18_regular.h ./bookerly_18_bold.h ./bookerly_18_bolditalic.h ./bookerly_18_italic.h
-reading_font_id BOOKERLY_20_FONT_ID \
-  ./bookerly_20_regular.h ./bookerly_20_bold.h ./bookerly_20_bolditalic.h ./bookerly_20_italic.h
+for font in LEXENDDECA BOOKERLY BOOKERLAM; do
+  # Chuyển tên font sang chữ thường để khớp với tên file
+  font_lower=$(echo "$font" | tr '[:upper:]' '[:lower:]')
 
-reading_font_id BOOKERLAM_8_FONT_ID \
-  ./bookerlam_8_regular.h ./bookerlam_8_bold.h ./bookerlam_8_bolditalic.h ./bookerlam_8_italic.h
-reading_font_id BOOKERLAM_10_FONT_ID \
-  ./bookerlam_10_regular.h ./bookerlam_10_bold.h ./bookerlam_10_bolditalic.h ./bookerlam_10_italic.h
-reading_font_id BOOKERLAM_12_FONT_ID \
-  ./bookerlam_12_regular.h ./bookerlam_12_bold.h ./bookerlam_12_bolditalic.h ./bookerlam_12_italic.h
-reading_font_id BOOKERLAM_14_FONT_ID \
-  ./bookerlam_14_regular.h ./bookerlam_14_bold.h ./bookerlam_14_bolditalic.h ./bookerlam_14_italic.h
-reading_font_id BOOKERLAM_15_FONT_ID \
-  ./bookerlam_15_regular.h ./bookerlam_15_bold.h ./bookerlam_15_bolditalic.h ./bookerlam_15_italic.h
-reading_font_id BOOKERLAM_16_FONT_ID \
-  ./bookerlam_16_regular.h ./bookerlam_16_bold.h ./bookerlam_16_bolditalic.h ./bookerlam_16_italic.h
-reading_font_id BOOKERLAM_18_FONT_ID \
-  ./bookerlam_18_regular.h ./bookerlam_18_bold.h ./bookerlam_18_bolditalic.h ./bookerlam_18_italic.h
-reading_font_id BOOKERLAM_20_FONT_ID \
-  ./bookerlam_20_regular.h ./bookerlam_20_bold.h ./bookerlam_20_bolditalic.h ./bookerlam_20_italic.h
+  for size in 8 10 12 14 15 16 18 20; do
+    id_name="${font}_${size}_FONT_ID"
+    font_ids_assert+=("$id_name")
 
-# UI fonts — no emoji variant
-echo "#define UI_10_FONT_ID ($(hash_files ./ubuntu_10_regular.h ./ubuntu_10_bold.h))"
-echo "#define UI_12_FONT_ID ($(hash_files ./ubuntu_12_regular.h ./ubuntu_12_bold.h))"
+    reading_font_id "$id_name" \
+      "./${font_lower}_${size}_regular.h" \
+      "./${font_lower}_${size}_bold.h" \
+      "./${font_lower}_${size}_bolditalic.h" \
+      "./${font_lower}_${size}_italic.h"
+  done
+done
+
+# 3. UI fonts
+echo "#define UI_10_FONT_ID ($(hash_files ./inter_10_regular.h ./inter_10_bold.h))"
+echo "#define UI_12_FONT_ID ($(hash_files ./inter_12_regular.h ./inter_12_bold.h))"
 echo "#define SMALL_FONT_ID ($(hash_files ./inter_8_regular.h))"
 
 echo ""
 echo "// Font ID 0 is reserved as the \"not found\" sentinel."
 echo "// Guard against any hash accidentally producing 0."
-for id in \
-  NOTOEMOJI_10_FONT_ID NOTOEMOJI_12_FONT_ID NOTOEMOJI_14_FONT_ID NOTOEMOJI_16_FONT_ID \
-  NOTOSYMBOLS_10_FONT_ID NOTOSYMBOLS_12_FONT_ID NOTOSYMBOLS_14_FONT_ID NOTOSYMBOLS_16_FONT_ID \
-  LEXENDDECA_8_FONT_ID LEXENDDECA_10_FONT_ID LEXENDDECA_12_FONT_ID LEXENDDECA_14_FONT_ID \
-  LEXENDDECA_16_FONT_ID LEXENDDECA_18_FONT_ID LEXENDDECA_20_FONT_ID \
-  CHAREINK_8_FONT_ID CHAREINK_10_FONT_ID CHAREINK_12_FONT_ID CHAREINK_14_FONT_ID \
-  CHAREINK_16_FONT_ID CHAREINK_18_FONT_ID CHAREINK_20_FONT_ID \
-  BITTER_8_FONT_ID BITTER_10_FONT_ID BITTER_12_FONT_ID BITTER_14_FONT_ID \
-  BITTER_16_FONT_ID BITTER_18_FONT_ID BITTER_20_FONT_ID \
-  UI_10_FONT_ID UI_12_FONT_ID SMALL_FONT_ID; do
+
+# Gom toàn bộ danh sách ID cần kiểm tra (bao gồm cả Noto và UI)
+for size in 10 12 14 16; do font_ids_assert+=("NOTOEMOJI_${size}_FONT_ID" "NOTOSYMBOLS_${size}_FONT_ID"); done
+font_ids_assert+=("UI_10_FONT_ID" "UI_12_FONT_ID" "SMALL_FONT_ID")
+
+for id in "${font_ids_assert[@]}"; do
   echo "static_assert(${id} != 0, \"Font ID collision with sentinel\");"
 done

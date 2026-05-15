@@ -55,6 +55,9 @@ The default fonts have been replaced with ChareInk, Lexend Deca, and Bitter. The
 
 The UI now uses [Inter](https://fonts.google.com/specimen/Inter) as the display font which has improved readability at smaller sizes.
 
+See [the user guide](./USER_GUIDE.md) for instructions on operating CrossPoint, including the
+[KOReader Sync quick setup](./USER_GUIDE.md#367-koreader-sync-quick-setup).
+
 ### Emojis and Misc Glyphs
 
 - Support for a limited set of Unicode [Emoticons](https://unicode-explorer.com/b/1F600) and [Miscellaneous Symbols](https://unicode-explorer.com/b/2600) using [Noto Emoji](https://fonts.google.com/noto/specimen/Noto+Emoji) and [Noto Sans Symbols](https://fonts.google.com/noto/specimen/Noto+Sans+Symbols) font.
@@ -82,8 +85,7 @@ There are 3 available build variants to choose from due to build size constraint
 > Teensy, Tiny, and Small font sizes had to be removed to reduce build size and still support emoji/symbols.
 
 - Emoji & Misc. Symbols Support
-- 4 Font sizes:
-  - Medium (14pt)
+- 3 Font sizes:
   - Large (16pt)
   - Extra Large (18pt)
   - Huge (20pt)

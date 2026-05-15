@@ -11,6 +11,7 @@
 //   OMIT_TEENSY_FONT - excludes 8px (Teensy) reading fonts; used by env:xlarge
 //   OMIT_TINY_FONT   - excludes 10px (Tiny) reading fonts; used by env:xlarge
 //   OMIT_SMALL_FONT  - excludes 12px (Small) reading fonts
+//   OMIT_MEDIUM_FONT - excludes 14px (Medium) reading fonts
 //   OMIT_XLARGE_FONT - excludes 18px (Extra Large) reading fonts; used by env:tiny
 //   OMIT_HUGE_FONT   - excludes 20px (Huge) reading fonts; used by all firmware envs except env:xlarge
 #ifdef OMIT_EMOJI_FONTS
