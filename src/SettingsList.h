@@ -17,7 +17,7 @@
 // are appended after the built-in fonts. Otherwise only built-in fonts are listed.
 inline SettingInfo buildFontFamilySetting(const SdCardFontRegistry* registry) {
   // Built-in font labels (StrId)
-  std::vector<StrId> enumValues = {StrId::STR_LEXEND_DECA, StrId::STR_BITTER, StrId::STR_CHAREINK};
+  std::vector<StrId> enumValues = {StrId::STR_LEXEND_DECA, StrId::STR_BOOKERLY, StrId::STR_BOOKERLAM};
   // Runtime string labels for SD card fonts
   std::vector<std::string> enumStringValues;
 
