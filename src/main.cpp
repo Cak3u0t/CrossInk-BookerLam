@@ -71,6 +71,7 @@ EpdFont bookerly12BoldItalicFont(&bookerly_12_bolditalic);
 EpdFontFamily bookerly12FontFamily(&bookerly12RegularFont, &bookerly12BoldFont, &bookerly12ItalicFont,
                                   &bookerly12BoldItalicFont);
 #endif
+#ifndef OMIT_MEDIUM_FONT
 EpdFont bookerly14RegularFont(&bookerly_14_regular);
 EpdFont bookerly14BoldFont(&bookerly_14_bold);
 EpdFont bookerly14ItalicFont(&bookerly_14_italic);
@@ -83,12 +84,15 @@ EpdFont bookerly15ItalicFont(&bookerly_15_italic);
 EpdFont bookerly15BoldItalicFont(&bookerly_15_bolditalic);
 EpdFontFamily bookerly15FontFamily(&bookerly15RegularFont, &bookerly15BoldFont, &bookerly15ItalicFont,
                                   &bookerly15BoldItalicFont);
+#endif
+#ifndef OMIT_LARGE_FONT
 EpdFont bookerly16RegularFont(&bookerly_16_regular);
 EpdFont bookerly16BoldFont(&bookerly_16_bold);
 EpdFont bookerly16ItalicFont(&bookerly_16_italic);
 EpdFont bookerly16BoldItalicFont(&bookerly_16_bolditalic);
 EpdFontFamily bookerly16FontFamily(&bookerly16RegularFont, &bookerly16BoldFont, &bookerly16ItalicFont,
                                   &bookerly16BoldItalicFont);
+#endif
 #ifndef OMIT_XLARGE_FONT
 EpdFont bookerly18RegularFont(&bookerly_18_regular);
 EpdFont bookerly18BoldFont(&bookerly_18_bold);
@@ -129,6 +133,7 @@ EpdFont lexenddeca12BoldItalicFont(&lexenddeca_12_bolditalic);
 EpdFontFamily lexenddeca12FontFamily(&lexenddeca12RegularFont, &lexenddeca12BoldFont, &lexenddeca12ItalicFont,
                                      &lexenddeca12BoldItalicFont);
 #endif
+#ifndef OMIT_MEDIUM_FONT
 EpdFont lexenddeca14RegularFont(&lexenddeca_14_regular);
 EpdFont lexenddeca14BoldFont(&lexenddeca_14_bold);
 EpdFont lexenddeca14ItalicFont(&lexenddeca_14_italic);
@@ -141,12 +146,15 @@ EpdFont lexenddeca15ItalicFont(&lexenddeca_15_italic);
 EpdFont lexenddeca15BoldItalicFont(&lexenddeca_15_bolditalic);
 EpdFontFamily lexenddeca15FontFamily(&lexenddeca15RegularFont, &lexenddeca15BoldFont, &lexenddeca15ItalicFont,
                                      &lexenddeca15BoldItalicFont);
+#endif
+#ifndef OMIT_LARGE_FONT
 EpdFont lexenddeca16RegularFont(&lexenddeca_16_regular);
 EpdFont lexenddeca16BoldFont(&lexenddeca_16_bold);
 EpdFont lexenddeca16ItalicFont(&lexenddeca_16_italic);
 EpdFont lexenddeca16BoldItalicFont(&lexenddeca_16_bolditalic);
 EpdFontFamily lexenddeca16FontFamily(&lexenddeca16RegularFont, &lexenddeca16BoldFont, &lexenddeca16ItalicFont,
                                      &lexenddeca16BoldItalicFont);
+#endif
 #ifndef OMIT_XLARGE_FONT
 EpdFont lexenddeca18RegularFont(&lexenddeca_18_regular);
 EpdFont lexenddeca18BoldFont(&lexenddeca_18_bold);
@@ -185,6 +193,7 @@ EpdFont bookerlam12ItalicFont(&bookerlam_12_italic);
 EpdFont bookerlam12BoldItalicFont(&bookerlam_12_bolditalic);
 EpdFontFamily bookerlam12FontFamily(&bookerlam12RegularFont, &bookerlam12BoldFont, &bookerlam12ItalicFont, &bookerlam12BoldItalicFont);
 #endif
+#ifndef OMIT_MEDIUM_FONT
 EpdFont bookerlam14RegularFont(&bookerlam_14_regular);
 EpdFont bookerlam14BoldFont(&bookerlam_14_bold);
 EpdFont bookerlam14ItalicFont(&bookerlam_14_italic);
@@ -195,11 +204,14 @@ EpdFont bookerlam15BoldFont(&bookerlam_15_bold);
 EpdFont bookerlam15ItalicFont(&bookerlam_15_italic);
 EpdFont bookerlam15BoldItalicFont(&bookerlam_15_bolditalic);
 EpdFontFamily bookerlam15FontFamily(&bookerlam15RegularFont, &bookerlam15BoldFont, &bookerlam15ItalicFont, &bookerlam15BoldItalicFont);
+#endif
+#ifndef OMIT_LARGE_FONT
 EpdFont bookerlam16RegularFont(&bookerlam_16_regular);
 EpdFont bookerlam16BoldFont(&bookerlam_16_bold);
 EpdFont bookerlam16ItalicFont(&bookerlam_16_italic);
 EpdFont bookerlam16BoldItalicFont(&bookerlam_16_bolditalic);
 EpdFontFamily bookerlam16FontFamily(&bookerlam16RegularFont, &bookerlam16BoldFont, &bookerlam16ItalicFont, &bookerlam16BoldItalicFont);
+#endif
 #ifndef OMIT_XLARGE_FONT
 EpdFont bookerlam18RegularFont(&bookerlam_18_regular);
 EpdFont bookerlam18BoldFont(&bookerlam_18_bold);
@@ -458,9 +470,13 @@ void setupDisplayAndFonts() {
 #ifndef OMIT_SMALL_FONT
   renderer.insertFont(BOOKERLY_12_FONT_ID, bookerly12FontFamily);
 #endif
+#ifndef OMIT_MEDIUM_FONT
   renderer.insertFont(BOOKERLY_14_FONT_ID, bookerly14FontFamily);
   renderer.insertFont(BOOKERLY_15_FONT_ID, bookerly15FontFamily);
+#endif
+#ifndef OMIT_LARGE_FONT
   renderer.insertFont(BOOKERLY_16_FONT_ID, bookerly16FontFamily);
+#endif
 #ifndef OMIT_XLARGE_FONT
   renderer.insertFont(BOOKERLY_18_FONT_ID, bookerly18FontFamily);
 #endif
@@ -477,9 +493,13 @@ void setupDisplayAndFonts() {
 #ifndef OMIT_SMALL_FONT
   renderer.insertFont(LEXENDDECA_12_FONT_ID, lexenddeca12FontFamily);
 #endif
+#ifndef OMIT_MEDIUM_FONT
   renderer.insertFont(LEXENDDECA_14_FONT_ID, lexenddeca14FontFamily);
   renderer.insertFont(LEXENDDECA_15_FONT_ID, lexenddeca15FontFamily);
+#endif
+#ifndef OMIT_LARGE_FONT
   renderer.insertFont(LEXENDDECA_16_FONT_ID, lexenddeca16FontFamily);
+#endif
 #ifndef OMIT_XLARGE_FONT
   renderer.insertFont(LEXENDDECA_18_FONT_ID, lexenddeca18FontFamily);
 #endif
@@ -496,9 +516,13 @@ void setupDisplayAndFonts() {
 #ifndef OMIT_SMALL_FONT
   renderer.insertFont(BOOKERLAM_12_FONT_ID, bookerlam12FontFamily);
 #endif
+#ifndef OMIT_MEDIUM_FONT
   renderer.insertFont(BOOKERLAM_14_FONT_ID, bookerlam14FontFamily);
   renderer.insertFont(BOOKERLAM_15_FONT_ID, bookerlam15FontFamily);
+#endif
+#ifndef OMIT_LARGE_FONT
   renderer.insertFont(BOOKERLAM_16_FONT_ID, bookerlam16FontFamily);
+#endif
 #ifndef OMIT_XLARGE_FONT
   renderer.insertFont(BOOKERLAM_18_FONT_ID, bookerlam18FontFamily);
 #endif

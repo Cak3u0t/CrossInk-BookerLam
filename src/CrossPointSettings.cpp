@@ -33,13 +33,13 @@ constexpr char LANG_FILE_BIN[] = "/.crosspoint/language.bin";
 constexpr char LANG_FILE_BAK[] = "/.crosspoint/language.bin.bak";
 constexpr uint8_t INVALID_READER_FONT_SIZE = 0xFF;
 constexpr CrossPointSettings::FONT_SIZE READER_FONT_SIZE_STORAGE_ORDER[] = {
-    CrossPointSettings::TINY,     CrossPointSettings::SMALL,       CrossPointSettings::MEDIUM,   CrossPointSettings::EXTRA_MEDIUM,
-    CrossPointSettings::LARGE,    CrossPointSettings::EXTRA_LARGE, CrossPointSettings::TEENSY,
-    CrossPointSettings::HUGE_SIZE};
+    CrossPointSettings::TINY,         CrossPointSettings::SMALL,    CrossPointSettings::MEDIUM,
+    CrossPointSettings::EXTRA_MEDIUM, CrossPointSettings::LARGE,    CrossPointSettings::EXTRA_LARGE,
+    CrossPointSettings::TEENSY,       CrossPointSettings::HUGE_SIZE};
 constexpr CrossPointSettings::FONT_SIZE READER_FONT_SIZE_CYCLE_ORDER[] = {
-    CrossPointSettings::TEENSY,   CrossPointSettings::TINY,  CrossPointSettings::SMALL,    CrossPointSettings::EXTRA_MEDIUM,
-    CrossPointSettings::MEDIUM,   CrossPointSettings::LARGE, CrossPointSettings::EXTRA_LARGE,
-    CrossPointSettings::HUGE_SIZE};
+    CrossPointSettings::TEENSY,       CrossPointSettings::TINY,     CrossPointSettings::SMALL,
+    CrossPointSettings::EXTRA_MEDIUM, CrossPointSettings::MEDIUM,   CrossPointSettings::LARGE,
+    CrossPointSettings::EXTRA_LARGE,  CrossPointSettings::HUGE_SIZE};
 
 bool isReaderFontSizeAvailable(const CrossPointSettings::FONT_SIZE size) {
   switch (size) {
@@ -61,6 +61,19 @@ bool isReaderFontSizeAvailable(const CrossPointSettings::FONT_SIZE size) {
 #else
       return true;
 #endif
+    case CrossPointSettings::MEDIUM:
+    default:
+#ifdef OMIT_MEDIUM_FONT
+      return false;
+#else
+      return true;
+#endif
+    case CrossPointSettings::LARGE:
+#ifdef OMIT_LARGE_FONT
+      return false;
+#else
+      return true;
+#endif
     case CrossPointSettings::EXTRA_LARGE:
 #ifdef OMIT_XLARGE_FONT
       return false;
@@ -73,11 +86,6 @@ bool isReaderFontSizeAvailable(const CrossPointSettings::FONT_SIZE size) {
 #else
       return true;
 #endif
-    case CrossPointSettings::MEDIUM:
-    case CrossPointSettings::EXTRA_MEDIUM:
-    case CrossPointSettings::LARGE:
-    default:
-      return true;
   }
 }
 
@@ -515,13 +523,17 @@ int CrossPointSettings::getReaderFontId() const {
         case SMALL:
           return LEXENDDECA_12_FONT_ID;
 #endif
+#ifndef OMIT_MEDIUM_FONT
         case MEDIUM:
         default:
           return LEXENDDECA_14_FONT_ID;
         case EXTRA_MEDIUM:
           return LEXENDDECA_15_FONT_ID;
+#endif
+#ifndef OMIT_LARGE_FONT
         case LARGE:
           return LEXENDDECA_16_FONT_ID;
+#endif
 #ifndef OMIT_XLARGE_FONT
         case EXTRA_LARGE:
           return LEXENDDECA_18_FONT_ID;
@@ -531,6 +543,8 @@ int CrossPointSettings::getReaderFontId() const {
           return LEXENDDECA_20_FONT_ID;
 #endif
       }
+      break;  // Thêm break để an toàn
+
     case BOOKERLY:
       switch (effectiveSize) {
 #ifndef OMIT_TEENSY_FONT
@@ -545,13 +559,17 @@ int CrossPointSettings::getReaderFontId() const {
         case SMALL:
           return BOOKERLY_12_FONT_ID;
 #endif
+#ifndef OMIT_MEDIUM_FONT
         case MEDIUM:
         default:
           return BOOKERLY_14_FONT_ID;
         case EXTRA_MEDIUM:
           return BOOKERLY_15_FONT_ID;
+#endif
+#ifndef OMIT_LARGE_FONT
         case LARGE:
           return BOOKERLY_16_FONT_ID;
+#endif
 #ifndef OMIT_XLARGE_FONT
         case EXTRA_LARGE:
           return BOOKERLY_18_FONT_ID;
@@ -561,6 +579,8 @@ int CrossPointSettings::getReaderFontId() const {
           return BOOKERLY_20_FONT_ID;
 #endif
       }
+      break;
+
     case BOOKERLAM:
       switch (effectiveSize) {
 #ifndef OMIT_TEENSY_FONT
@@ -575,13 +595,17 @@ int CrossPointSettings::getReaderFontId() const {
         case SMALL:
           return BOOKERLAM_12_FONT_ID;
 #endif
+#ifndef OMIT_MEDIUM_FONT
         case MEDIUM:
         default:
           return BOOKERLAM_14_FONT_ID;
         case EXTRA_MEDIUM:
           return BOOKERLAM_15_FONT_ID;
+#endif  // <--- Đã sửa: Phải đóng ở đây trước khi sang LARGE
+#ifndef OMIT_LARGE_FONT
         case LARGE:
           return BOOKERLAM_16_FONT_ID;
+#endif
 #ifndef OMIT_XLARGE_FONT
         case EXTRA_LARGE:
           return BOOKERLAM_18_FONT_ID;
@@ -591,5 +615,9 @@ int CrossPointSettings::getReaderFontId() const {
           return BOOKERLAM_20_FONT_ID;
 #endif
       }
-  }
+      break;
+    }
+
+  // Luôn có giá trị trả về mặc định để tránh lỗi "-Werror=return-type"
+  return LEXENDDECA_14_FONT_ID;
 }

@@ -40,6 +40,7 @@
 #include BUILTIN_READING_FONT_HEADER(bookerly_12_italic)
 #include BUILTIN_READING_FONT_HEADER(bookerly_12_regular)
 #endif
+#ifndef OMIT_MEDIUM_FONT
 #include BUILTIN_READING_FONT_HEADER(bookerly_14_bold)
 #include BUILTIN_READING_FONT_HEADER(bookerly_14_bolditalic)
 #include BUILTIN_READING_FONT_HEADER(bookerly_14_italic)
@@ -48,10 +49,13 @@
 #include BUILTIN_READING_FONT_HEADER(bookerly_15_bolditalic)
 #include BUILTIN_READING_FONT_HEADER(bookerly_15_italic)
 #include BUILTIN_READING_FONT_HEADER(bookerly_15_regular)
+#endif
+#ifndef OMIT_LARGE_FONT
 #include BUILTIN_READING_FONT_HEADER(bookerly_16_bold)
 #include BUILTIN_READING_FONT_HEADER(bookerly_16_bolditalic)
 #include BUILTIN_READING_FONT_HEADER(bookerly_16_italic)
 #include BUILTIN_READING_FONT_HEADER(bookerly_16_regular)
+#endif
 #ifndef OMIT_XLARGE_FONT
 #include BUILTIN_READING_FONT_HEADER(bookerly_18_bold)
 #include BUILTIN_READING_FONT_HEADER(bookerly_18_bolditalic)
@@ -83,6 +87,7 @@
 #include BUILTIN_READING_FONT_HEADER(bookerlam_12_italic)
 #include BUILTIN_READING_FONT_HEADER(bookerlam_12_regular)
 #endif
+#ifndef OMIT_MEDIUM_FONT
 #include BUILTIN_READING_FONT_HEADER(bookerlam_14_bold)
 #include BUILTIN_READING_FONT_HEADER(bookerlam_14_bolditalic)
 #include BUILTIN_READING_FONT_HEADER(bookerlam_14_italic)
@@ -91,10 +96,13 @@
 #include BUILTIN_READING_FONT_HEADER(bookerlam_15_bolditalic)
 #include BUILTIN_READING_FONT_HEADER(bookerlam_15_italic)
 #include BUILTIN_READING_FONT_HEADER(bookerlam_15_regular)
+#endif
+#ifndef OMIT_LARGE_FONT
 #include BUILTIN_READING_FONT_HEADER(bookerlam_16_bold)
 #include BUILTIN_READING_FONT_HEADER(bookerlam_16_bolditalic)
 #include BUILTIN_READING_FONT_HEADER(bookerlam_16_italic)
 #include BUILTIN_READING_FONT_HEADER(bookerlam_16_regular)
+#endif
 #ifndef OMIT_XLARGE_FONT
 #include BUILTIN_READING_FONT_HEADER(bookerlam_18_bold)
 #include BUILTIN_READING_FONT_HEADER(bookerlam_18_bolditalic)
@@ -126,6 +134,7 @@
 #include BUILTIN_READING_FONT_HEADER(lexenddeca_12_italic)
 #include BUILTIN_READING_FONT_HEADER(lexenddeca_12_regular)
 #endif
+#ifndef OMIT_MEDIUM_FONT
 #include BUILTIN_READING_FONT_HEADER(lexenddeca_14_bold)
 #include BUILTIN_READING_FONT_HEADER(lexenddeca_14_bolditalic)
 #include BUILTIN_READING_FONT_HEADER(lexenddeca_14_italic)
@@ -134,10 +143,13 @@
 #include BUILTIN_READING_FONT_HEADER(lexenddeca_15_bolditalic)
 #include BUILTIN_READING_FONT_HEADER(lexenddeca_15_italic)
 #include BUILTIN_READING_FONT_HEADER(lexenddeca_15_regular)
+#endif
+#ifndef OMIT_LARGE_FONT
 #include BUILTIN_READING_FONT_HEADER(lexenddeca_16_bold)
 #include BUILTIN_READING_FONT_HEADER(lexenddeca_16_bolditalic)
 #include BUILTIN_READING_FONT_HEADER(lexenddeca_16_italic)
 #include BUILTIN_READING_FONT_HEADER(lexenddeca_16_regular)
+#endif
 #ifndef OMIT_XLARGE_FONT
 #include BUILTIN_READING_FONT_HEADER(lexenddeca_18_bold)
 #include BUILTIN_READING_FONT_HEADER(lexenddeca_18_bolditalic)
