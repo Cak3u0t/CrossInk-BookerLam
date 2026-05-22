@@ -11,6 +11,7 @@
 #define NOTOSYMBOLS_14_FONT_ID (66525368)
 #define NOTOSYMBOLS_16_FONT_ID (-14883773)
 #ifdef OMIT_EMOJI_FONTS
+
 #define LEXENDDECA_8_FONT_ID (534378228)
 #else
 #define LEXENDDECA_8_FONT_ID (1094524047)
@@ -50,6 +51,7 @@
 #else
 #define LEXENDDECA_20_FONT_ID (-1744425307)
 #endif
+
 #ifdef OMIT_EMOJI_FONTS
 #define BOOKERLY_8_FONT_ID (80404456)
 #else
@@ -90,6 +92,7 @@
 #else
 #define BOOKERLY_20_FONT_ID (1981347622)
 #endif
+
 #ifdef OMIT_EMOJI_FONTS
 #define BOOKERLAM_8_FONT_ID (-346624227)
 #else
@@ -130,6 +133,7 @@
 #else
 #define BOOKERLAM_20_FONT_ID (-648852884)
 #endif
+
 #define UI_10_FONT_ID (1449607355)
 #define UI_12_FONT_ID (-837600088)
 #define SMALL_FONT_ID (1002091607)
@@ -140,18 +144,20 @@ static_assert(NOTOEMOJI_10_FONT_ID != 0, "Font ID collision with sentinel");
 static_assert(NOTOEMOJI_12_FONT_ID != 0, "Font ID collision with sentinel");
 static_assert(NOTOEMOJI_14_FONT_ID != 0, "Font ID collision with sentinel");
 static_assert(NOTOEMOJI_16_FONT_ID != 0, "Font ID collision with sentinel");
+
 static_assert(NOTOSYMBOLS_10_FONT_ID != 0, "Font ID collision with sentinel");
 static_assert(NOTOSYMBOLS_12_FONT_ID != 0, "Font ID collision with sentinel");
 static_assert(NOTOSYMBOLS_14_FONT_ID != 0, "Font ID collision with sentinel");
 static_assert(NOTOSYMBOLS_16_FONT_ID != 0, "Font ID collision with sentinel");
+
 static_assert(LEXENDDECA_8_FONT_ID != 0, "Font ID collision with sentinel");
-static_assert(LEXENDDECA_9_FONT_ID != 0, "Font ID collision with sentinel");
 static_assert(LEXENDDECA_10_FONT_ID != 0, "Font ID collision with sentinel");
 static_assert(LEXENDDECA_12_FONT_ID != 0, "Font ID collision with sentinel");
 static_assert(LEXENDDECA_14_FONT_ID != 0, "Font ID collision with sentinel");
 static_assert(LEXENDDECA_16_FONT_ID != 0, "Font ID collision with sentinel");
 static_assert(LEXENDDECA_18_FONT_ID != 0, "Font ID collision with sentinel");
 static_assert(LEXENDDECA_20_FONT_ID != 0, "Font ID collision with sentinel");
+
 static_assert(BOOKERLY_8_FONT_ID != 0, "Font ID collision with sentinel");
 static_assert(BOOKERLY_10_FONT_ID != 0, "Font ID collision with sentinel");
 static_assert(BOOKERLY_12_FONT_ID != 0, "Font ID collision with sentinel");
@@ -160,12 +166,14 @@ static_assert(BOOKERLY_16_FONT_ID != 0, "Font ID collision with sentinel");
 static_assert(BOOKERLY_18_FONT_ID != 0, "Font ID collision with sentinel");
 static_assert(BOOKERLY_20_FONT_ID != 0, "Font ID collision with sentinel");
 static_assert(BOOKERLAM_8_FONT_ID != 0, "Font ID collision with sentinel");
+
 static_assert(BOOKERLAM_10_FONT_ID != 0, "Font ID collision with sentinel");
 static_assert(BOOKERLAM_12_FONT_ID != 0, "Font ID collision with sentinel");
 static_assert(BOOKERLAM_14_FONT_ID != 0, "Font ID collision with sentinel");
 static_assert(BOOKERLAM_16_FONT_ID != 0, "Font ID collision with sentinel");
 static_assert(BOOKERLAM_18_FONT_ID != 0, "Font ID collision with sentinel");
 static_assert(BOOKERLAM_20_FONT_ID != 0, "Font ID collision with sentinel");
+
 static_assert(UI_10_FONT_ID != 0, "Font ID collision with sentinel");
 static_assert(UI_12_FONT_ID != 0, "Font ID collision with sentinel");
 static_assert(SMALL_FONT_ID != 0, "Font ID collision with sentinel");

@@ -20,14 +20,14 @@ inline StrId fontSizeLabelForPointSize(const uint8_t pointSize) {
   switch (pointSize) {
     case 8:
       return StrId::STR_TEENSY;
-    case 9:
-      return StrId::STR_ITTY_BITTY;
     case 10:
       return StrId::STR_TINY;
     case 12:
       return StrId::STR_SMALL;
     case 14:
       return StrId::STR_MEDIUM;
+    case 15:
+      return StrId::STR_X_MEDIUM;
     case 16:
       return StrId::STR_LARGE;
     case 18:
@@ -50,6 +50,7 @@ inline SettingInfo buildBuiltinFontSizeSetting() {
 #endif
 #ifndef OMIT_MEDIUM_FONT
                                StrId::STR_MEDIUM,
+                               StrId::STR_X_MEDIUM,
 #endif
 #ifndef OMIT_LARGE_FONT
                                StrId::STR_LARGE,
@@ -62,9 +63,6 @@ inline SettingInfo buildBuiltinFontSizeSetting() {
 #endif
 #ifndef OMIT_HUGE_FONT
                                StrId::STR_HUGE,
-#endif
-#ifndef OMIT_ITTY_BITTY_FONT
-                               StrId::STR_ITTY_BITTY,
 #endif
                            },
                            "fontSize", StrId::STR_CAT_READER);
@@ -297,14 +295,14 @@ inline std::vector<SettingInfo> getSettingsList(const SdCardFontRegistry* regist
         // --- Reader ---
         // Built-in font-family entry. Replaced per-call with a registry-aware
         // version when SD fonts are installed.
-        SettingInfo::Enum(StrId::STR_FONT_FAMILY, &CrossPointSettings::fontFamily,
+    add(SettingInfo::Enum(StrId::STR_FONT_FAMILY, &CrossPointSettings::fontFamily,
                           {
                               StrId::STR_LEXEND_DECA,
                               StrId::STR_BOOKERLY,
                               StrId::STR_BOOKERLAM,
                           },
-                          "fontFamily", StrId::STR_CAT_READER),
-        SettingInfo::Enum(StrId::STR_FONT_SIZE, &CrossPointSettings::fontSize,
+                          "fontFamily", StrId::STR_CAT_READER)),
+    add(SettingInfo::Enum(StrId::STR_FONT_SIZE, &CrossPointSettings::fontSize,
                           {
 #ifndef OMIT_TINY_FONT
                               StrId::STR_TINY,
@@ -312,9 +310,13 @@ inline std::vector<SettingInfo> getSettingsList(const SdCardFontRegistry* regist
 #ifndef OMIT_SMALL_FONT
                               StrId::STR_SMALL,
 #endif
+#ifndef OMIT_MEDIUM_FONT
                               StrId::STR_MEDIUM,
                               StrId::STR_X_MEDIUM,
+#endif
+#ifndef OMIT_LARGE_FONT
                               StrId::STR_LARGE,
+#endif
 #ifndef OMIT_XLARGE_FONT
                               StrId::STR_X_LARGE,
 #endif
@@ -325,10 +327,10 @@ inline std::vector<SettingInfo> getSettingsList(const SdCardFontRegistry* regist
                               StrId::STR_HUGE,
 #endif
                           },
-                          "fontSize", StrId::STR_CAT_READER),
-        SettingInfo::Enum(StrId::STR_LINE_SPACING, &CrossPointSettings::lineSpacing,
-                          {StrId::STR_TIGHT, StrId::STR_NORMAL, StrId::STR_WIDE}, "lineSpacing", StrId::STR_CAT_READER),
-        SettingInfo::Enum(StrId::STR_ORIENTATION, &CrossPointSettings::orientation,
+                          "fontSize", StrId::STR_CAT_READER)),
+    add(SettingInfo::Enum(StrId::STR_LINE_SPACING, &CrossPointSettings::lineSpacing,
+                          {StrId::STR_TIGHT, StrId::STR_NORMAL, StrId::STR_WIDE}, "lineSpacing", StrId::STR_CAT_READER)),
+    add(SettingInfo::Enum(StrId::STR_ORIENTATION, &CrossPointSettings::orientation,
                           {StrId::STR_PORTRAIT, StrId::STR_LANDSCAPE_CW, StrId::STR_INVERTED, StrId::STR_LANDSCAPE_CCW},
                           "orientation", StrId::STR_CAT_READER));
     add(SettingInfo::Value(StrId::STR_SCREEN_MARGIN, &CrossPointSettings::screenMargin, {5, 40, 5}, "screenMargin",

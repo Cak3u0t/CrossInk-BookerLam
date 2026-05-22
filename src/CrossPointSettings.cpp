@@ -58,12 +58,12 @@ constexpr CrossPointSettings::FONT_SIZE READER_FONT_SIZE_CYCLE_ORDER[] = {
     CrossPointSettings::EXTRA_LARGE,  CrossPointSettings::HUGE_SIZE};
 
     constexpr uint8_t SD_FONT_RANGE_POINT_SIZES[CrossPointSettings::SD_FONT_SIZE_RANGE_COUNT]
-                                           [CrossPointSettings::SD_FONT_MAX_SIZE_STEPS] = {
-                                               {8, 10, 12},
-                                               {10, 12, 14},
-                                               {14, 15, 16},
-                                               {16, 18, 20},
-                                               {8, 10, 12, 14, 15, 16, 18, 20},
+    [CrossPointSettings::SD_FONT_MAX_SIZE_STEPS] = {
+        {8, 10, 12},
+        {10, 12, 14},
+        {14, 15, 16},
+        {16, 18, 20},
+        {8, 10, 12, 14, 15, 16, 18, 20},
 };
 constexpr uint8_t SD_FONT_RANGE_STEP_COUNTS[CrossPointSettings::SD_FONT_SIZE_RANGE_COUNT] = {3, 3, 3, 3, 8};
 
@@ -75,12 +75,6 @@ bool isReaderFontSizeAvailable(const CrossPointSettings::FONT_SIZE size) {
   switch (size) {
     case CrossPointSettings::TEENSY:
 #ifdef OMIT_TEENSY_FONT
-      return false;
-#else
-      return true;
-#endif
-    case CrossPointSettings::ITTY_BITTY:
-#ifdef OMIT_ITTY_BITTY_FONT
       return false;
 #else
       return true;
@@ -98,7 +92,6 @@ bool isReaderFontSizeAvailable(const CrossPointSettings::FONT_SIZE size) {
       return true;
 #endif
     case CrossPointSettings::MEDIUM:
-    default:
 #ifdef OMIT_MEDIUM_FONT
       return false;
 #else
@@ -112,12 +105,6 @@ bool isReaderFontSizeAvailable(const CrossPointSettings::FONT_SIZE size) {
 #endif
     case CrossPointSettings::EXTRA_LARGE:
 #ifdef OMIT_XLARGE_FONT
-      return false;
-#else
-      return true;
-#endif
-    case CrossPointSettings::LARGE:
-#ifdef OMIT_LARGE_FONT
       return false;
 #else
       return true;
@@ -197,8 +184,6 @@ int getFallbackReaderFontIdForFamily(const CrossPointSettings::FONT_FAMILY famil
       return LEXENDDECA_20_FONT_ID;
 #elif !defined(OMIT_TEENSY_FONT)
       return LEXENDDECA_8_FONT_ID;
-#elif !defined(OMIT_ITTY_BITTY_FONT)
-      return LEXENDDECA_9_FONT_ID;
 #else
 #error "No reader fonts enabled for LEXENDDECA"
 #endif
@@ -509,12 +494,12 @@ float CrossPointSettings::getReaderLineCompression() const {
     default:
       switch (lineSpacing) {
         case TIGHT:
-          return 0.90f;
+          return 0.95f;
         case NORMAL:
         default:
-          return 1.0f;
+          return 1.1f;
         case WIDE:
-          return 1.2f;
+          return 1.3f;
       }
     case BOOKERLY:
       switch (lineSpacing) {
@@ -755,7 +740,6 @@ int CrossPointSettings::getReaderFontId() const {
         case EXTRA_MEDIUM:
           return BOOKERLY_15_FONT_ID;
 #endif
-#ifndef OMIT_LARGE_FONT
 #ifndef OMIT_LARGE_FONT
         case LARGE:
           return BOOKERLY_16_FONT_ID;

@@ -123,13 +123,13 @@ class CrossPointSettings {
   static constexpr uint8_t BUILTIN_FONT_COUNT = FONT_FAMILY_COUNT;
   // Font size options
   enum FONT_SIZE {
-    TINY = 0,
-    SMALL = 1,
-    MEDIUM = 2,
-    EXTRA_MEDIUM = 3,
-    LARGE = 4,
-    EXTRA_LARGE = 5,
-    TEENSY = 6,
+    TEENSY = 0,
+    TINY = 1,
+    SMALL = 2,
+    MEDIUM = 3,
+    EXTRA_MEDIUM = 4,
+    LARGE = 5,
+    EXTRA_LARGE = 6,
     HUGE_SIZE = 7,
     FONT_SIZE_COUNT
   };
@@ -382,8 +382,7 @@ class CrossPointSettings {
   static constexpr uint8_t SD_FONT_MAX_SIZE_STEPS = 8;
 
   uint16_t getPowerButtonWakeDuration() const {
-    return (shortPwrBtn == CrossPointSettings::SHORT_PWRBTN::SLEEP) ? POWER_BUTTON_WAKE_SHORT_MS
-                                                                    : POWER_BUTTON_LONG_PRESS_MS;
+    return (shortPwrBtn == CrossPointSettings::SHORT_PWRBTN::SLEEP) ? POWER_BUTTON_WAKE_SHORT_MS : POWER_BUTTON_LONG_PRESS_MS;
   }
 
   // Callback to resolve SD card font IDs. Set by SdCardFontSystem::begin().
