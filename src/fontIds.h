@@ -145,6 +145,7 @@ static_assert(NOTOSYMBOLS_12_FONT_ID != 0, "Font ID collision with sentinel");
 static_assert(NOTOSYMBOLS_14_FONT_ID != 0, "Font ID collision with sentinel");
 static_assert(NOTOSYMBOLS_16_FONT_ID != 0, "Font ID collision with sentinel");
 static_assert(LEXENDDECA_8_FONT_ID != 0, "Font ID collision with sentinel");
+static_assert(LEXENDDECA_9_FONT_ID != 0, "Font ID collision with sentinel");
 static_assert(LEXENDDECA_10_FONT_ID != 0, "Font ID collision with sentinel");
 static_assert(LEXENDDECA_12_FONT_ID != 0, "Font ID collision with sentinel");
 static_assert(LEXENDDECA_14_FONT_ID != 0, "Font ID collision with sentinel");

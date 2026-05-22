@@ -17,6 +17,10 @@ My goal with this fork was to maintain the core Crosspoint firmware while integr
   </tr>
 </table>
 
+---
+
+**Note**: This firmware is confirmed to be working on both the X3 and X4.
+
 ### Highlights
 
 - New reader fonts: ChareInk, Lexend Deca, and Bitter
@@ -40,6 +44,7 @@ My goal with this fork was to maintain the core Crosspoint firmware while integr
 - Reading stats: total books read, total reading time, number of sessions, pages turned, average session time, pages turned per minute. You can also set your reading stats as your sleep screen.
 - Added customizable Auto Page Turn Interval (anything between 5-120 seconds)
 - Added ability to view Recent Books as a 3x3 grid view
+- Added ability to install custom fonts on the SD card
 - Device simulator during development
 - To view a more detailed list for each version, visit the [releases](https://github.com/uxjulia/CrossInk/releases) page to read release notes.
 
@@ -55,9 +60,6 @@ The default fonts have been replaced with ChareInk, Lexend Deca, and Bitter. The
 
 The UI now uses [Inter](https://fonts.google.com/specimen/Inter) as the display font which has improved readability at smaller sizes.
 
-See [the user guide](./USER_GUIDE.md) for instructions on operating CrossPoint, including the
-[KOReader Sync quick setup](./USER_GUIDE.md#367-koreader-sync-quick-setup).
-
 ### Emojis and Misc Glyphs
 
 - Support for a limited set of Unicode [Emoticons](https://unicode-explorer.com/b/1F600) and [Miscellaneous Symbols](https://unicode-explorer.com/b/2600) using [Noto Emoji](https://fonts.google.com/noto/specimen/Noto+Emoji) and [Noto Sans Symbols](https://fonts.google.com/noto/specimen/Noto+Sans+Symbols) font.
@@ -68,13 +70,21 @@ See [the user guide](./USER_GUIDE.md) for instructions on operating CrossPoint, 
 
 There are 3 available build variants to choose from due to build size constraints: tiny, xlarge, and no_emoji
 
+**teensy**
+> Only the small sized fonts.
+- Emoji & Misc. Symbols Support
+- 4 Font sizes:
+  - Teensy (8pt)
+  - Itty Bitty (9pt)
+  - Tiny (10pt)
+  - Small (12pt)
+
 **tiny**
 
 > No Extra Large or Huge font size. My preferred build.
 
 - Emoji & Misc. Symbols Support
-- 5 Font sizes:
-  - Teensy (8pt)
+- 4 Font sizes:
   - Tiny (10pt)
   - Small (12pt)
   - Medium (14pt)
@@ -235,9 +245,7 @@ pio run -e simulator
 > **Note:** On first open of an ebook, an "Indexing..." popup will appear while the section cache is built in `.crosspoint/`. If you see rendering issues after a code change, delete `./fs_/.crosspoint/` to clear stale caches.
 
 ---
-
-## Installing
-
+## Installation
 ### Web
 
 1. Download the `firmware-*.bin` file for the build variant of your choosing from the [releases](https://github.com/uxjulia/CrossInk/releases) page
@@ -248,7 +256,9 @@ pio run -e simulator
 
 To revert back to the official firmware, you can flash the latest official firmware from https://crosspointreader.com/#flash-tools
 
-### Command line (specific firmware version)
+### Command line
+
+1. Install [`esptool`](https://github.com/espressif/esptool):
 
 > **Note:** These instructions are for macOS and Linux. Windows users should use the [Web installer](#web) instead.
 
@@ -273,28 +283,44 @@ esptool.py --chip esp32c3 --port /dev/ttyACM0 --baud 921600 write_flash 0x10000 
 # macOS
 esptool.py --chip esp32c3 --port /dev/cu.usbmodem2101 --baud 921600 write_flash 0x10000 /path/to/firmware.bin
 ```
+### Revert to Official Firmware
 
-## Development
+To revert to the official firmware, you can flash the latest official firmware using https://crosspointreader.com/#flash-tools.
+
+---
+
+## Documentation
+
+- [User Guide](./USER_GUIDE.md)
+- [Web server usage](./docs/webserver.md)
+- [Web server endpoints](./docs/webserver-endpoints.md)
+- [Common issues](./docs/troubleshooting.md)
+- [Project scope](./SCOPE.md)
+- [Contributing docs](./docs/contributing/README.md)
+
+---
+
+## Development quick start
 
 ### Prerequisites
 
 - **PlatformIO Core** (`pio`) or **VS Code + PlatformIO IDE**
 - Python 3.8+
 - USB-C cable for flashing the ESP32-C3
-- Xteink X4
+- Unlocked Xteink X4 or X3
 
-### Checking out the code
+### Setup
 
-CrossPoint uses PlatformIO for building and flashing the firmware. To get started, clone the repository:
+CrossInk uses PlatformIO for building and flashing the firmware. To get started, clone the repository:
 
 ```
 git clone --recursive https://github.com/uxjulia/CrossInk
 
-# Or, if you've already cloned without --recursive:
+# if cloned without --recursive:
 git submodule update --init --recursive
 ```
 
-### Flashing your device
+### Build / flash / monitor
 
 Connect your Xteink X4 to your computer via USB-C and run the following command. Replace `tiny` with `xlarge` or `no_emoji` if you prefer a different build variant (see [Font Sizes](#font-sizes)).
 
@@ -312,7 +338,7 @@ First, make sure all required Python packages are installed:
 python3 -m pip install pyserial colorama matplotlib
 ```
 
-after that run the script:
+After that run the script:
 
 ```sh
 # For Linux
@@ -325,6 +351,8 @@ python3 scripts/debugging_monitor.py /dev/cu.usbmodem2101
 
 Minor adjustments may be required for Windows.
 
+---
+
 ## Internals
 
 The firmware is pretty aggressive about caching data down to the SD card to minimise RAM usage. The ESP32-C3 only
@@ -333,27 +361,41 @@ on this constraint.
 
 ### Data caching
 
-The first time chapters of a book are loaded, they are cached to the SD card. Subsequent loads are served from the
-cache. This cache directory exists at `.crosspoint` on the SD card. The structure is as follows:
+The first time a book is loaded, CrossInk writes reusable data to the SD card so later opens do not have to rebuild
+everything from scratch. This data lives in `.crosspoint` on the SD card. The directory also contains device settings,
+saved servers, recent books, bookmarks, and reading stats, so it is more than just a disposable render cache.
+
+The structure is roughly:
 
 ```
 .crosspoint/
-├── epub_12471232/       # Each EPUB is cached to a subdirectory named `epub_<hash>`
-│   ├── progress.bin     # Stores reading progress (chapter, page, etc.)
-│   ├── stats.bin        # Per-book reading statistics (time, sessions, pages turned)
-│   ├── cover.bmp        # Book cover image (once generated)
-│   ├── book.bin         # Book metadata (title, author, spine, table of contents, etc.)
-│   └── sections/        # All chapter data is stored in the sections subdirectory
-│       ├── 0.bin        # Chapter data (screen count, all text layout info, etc.)
-│       ├── 1.bin        #     files are named by their index in the spine
+├── global_stats.bin        # All-time reading stats, including total books read
+├── global_stats.bin.bak    # Backup used if the main global stats file is corrupt
+├── settings.bin            # Device settings
+├── state.bin               # Last-opened book and sleep/session state
+├── recent.bin              # Recent books list
+├── bookmarks/              # Bookmark files, one per book
+├── home_carousel_cache.bin # Lyra Carousel home-screen snapshot cache
+├── epub_12471232/          # Each EPUB is cached to `epub_<hash>`
+│   ├── progress.bin        # Reading position (chapter, page, etc.)
+│   ├── stats.bin           # Per-book reading stats
+│   ├── cover.bmp           # Book cover image, once generated
+│   ├── thumb_*.bmp         # Home/recent-books thumbnail images
+│   ├── book.bin            # Book metadata (title, author, spine, table of contents, etc.)
+│   ├── css_rules.cache     # Parsed CSS rules
+│   └── sections/           # Pre-rendered chapter/page layout data
+│       ├── 0.bin
+│       ├── 1.bin
 │       └── ...
-│
-└── epub_189013891/
+├── xtc_12471232/           # XTC progress and generated cover/thumb images
+└── txt_12471232/           # TXT progress, page index, and generated cover image
 ```
 
-Deleting the `.crosspoint` directory will clear the entire cache.
+Deleting the entire `.crosspoint` directory will reset caches, settings, saved network/server data, bookmarks, recent
+books, reading progress, and reading stats. To clear EPUB/XTC render caches from the device UI, use
+**Settings > System > Clear Reading Cache**; that leaves settings and global stats in place.
 
-Due the way it's currently implemented, the cache is not automatically cleared when a book is deleted and moving a book
-file will use a new cache directory, resetting the reading progress.
+Due to the way it's currently implemented, cache data is not automatically cleared when a book is deleted. Moving a book
+file creates a new path-based cache directory, so the moved copy may start with fresh reading progress.
 
 For more details on the internal file structures, see the [file formats document](./docs/file-formats.md).

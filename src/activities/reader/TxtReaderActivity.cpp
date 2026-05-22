@@ -12,6 +12,7 @@
 #include "MappedInputManager.h"
 #include "ReaderUtils.h"
 #include "RecentBooksStore.h"
+#include "activities/boot_sleep/SleepCoverAssets.h"
 #include "components/UITheme.h"
 #include "fontIds.h"
 
@@ -105,7 +106,9 @@ void TxtReaderActivity::onEnter() {
   auto fileName = filePath.substr(filePath.rfind('/') + 1);
   APP_STATE.openEpubPath = filePath;
   APP_STATE.saveToFile();
-  RECENT_BOOKS.addOrUpdateBook(filePath, fileName, "", "");
+  SleepCoverAssets::prepareTxt(*txt);
+  const std::string coverBmpPath = Storage.exists(txt->getCoverBmpPath().c_str()) ? txt->getCoverBmpPath() : "";
+  RECENT_BOOKS.addOrUpdateBook(filePath, fileName, "", coverBmpPath);
 
   // Trigger first update
   requestUpdate();
@@ -321,6 +324,13 @@ bool TxtReaderActivity::loadPageAtOffset(size_t offset, std::vector<std::string>
   }
   buffer[chunkSize] = '\0';
 
+  // Prime the SD card font's advance table before the wrap helper starts
+  // measuring strings. This avoids on-demand SD glyph lookups for every width
+  // check while preserving the shared parseAndWrapLines() implementation.
+  if (renderer.isSdCardFont(cachedFontId)) {
+    renderer.ensureSdCardFontReady(cachedFontId, reinterpret_cast<const char*>(buffer), /*styleMask=*/0x01);
+  }
+
   size_t pos = parseAndWrapLines(buffer, chunkSize, offset, fileSize, linesPerPage, renderer, cachedFontId,
                                  viewportWidth, outLines);
   nextOffset = offset + pos;
@@ -385,12 +395,12 @@ void TxtReaderActivity::renderPage() {
             // x already set to left margin
             break;
           case CrossPointSettings::CENTER_ALIGN: {
-            int textWidth = renderer.getTextWidth(cachedFontId, line.c_str());
+            int textWidth = renderer.getTextAdvanceX(cachedFontId, line.c_str(), EpdFontFamily::REGULAR);
             x = cachedOrientedMarginLeft + (contentWidth - textWidth) / 2;
             break;
           }
           case CrossPointSettings::RIGHT_ALIGN: {
-            int textWidth = renderer.getTextWidth(cachedFontId, line.c_str());
+            int textWidth = renderer.getTextAdvanceX(cachedFontId, line.c_str(), EpdFontFamily::REGULAR);
             x = cachedOrientedMarginLeft + contentWidth - textWidth;
             break;
           }

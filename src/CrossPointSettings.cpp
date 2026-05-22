@@ -32,6 +32,22 @@ constexpr char SETTINGS_FILE_BAK[] = "/.crosspoint/settings.bin.bak";
 constexpr char LANG_FILE_BIN[] = "/.crosspoint/language.bin";
 constexpr char LANG_FILE_BAK[] = "/.crosspoint/language.bin.bak";
 constexpr uint8_t INVALID_READER_FONT_SIZE = 0xFF;
+constexpr uint8_t SLEEP_SCREEN_STORAGE_ORDER[] = {
+    static_cast<uint8_t>(CrossPointSettings::DARK),
+    static_cast<uint8_t>(CrossPointSettings::LIGHT),
+    static_cast<uint8_t>(CrossPointSettings::CUSTOM),
+    static_cast<uint8_t>(CrossPointSettings::COVER),
+    static_cast<uint8_t>(CrossPointSettings::BLANK),
+    static_cast<uint8_t>(CrossPointSettings::COVER_CUSTOM),
+    static_cast<uint8_t>(CrossPointSettings::OVERLAY),
+    static_cast<uint8_t>(CrossPointSettings::READING_STATS_SLEEP),
+    static_cast<uint8_t>(CrossPointSettings::MINIMAL_SLEEP),
+    static_cast<uint8_t>(CrossPointSettings::QUICK_RESUME),
+};
+constexpr uint8_t SLEEP_SCREEN_STORAGE_ORDER_COUNT =
+    sizeof(SLEEP_SCREEN_STORAGE_ORDER) / sizeof(SLEEP_SCREEN_STORAGE_ORDER[0]);
+static_assert(SLEEP_SCREEN_STORAGE_ORDER_COUNT == CrossPointSettings::SLEEP_SCREEN_MODE_COUNT,
+              "Update sleep screen persisted-value mapping when adding modes");
 constexpr CrossPointSettings::FONT_SIZE READER_FONT_SIZE_STORAGE_ORDER[] = {
     CrossPointSettings::TINY,         CrossPointSettings::SMALL,    CrossPointSettings::MEDIUM,
     CrossPointSettings::EXTRA_MEDIUM, CrossPointSettings::LARGE,    CrossPointSettings::EXTRA_LARGE,
@@ -41,10 +57,30 @@ constexpr CrossPointSettings::FONT_SIZE READER_FONT_SIZE_CYCLE_ORDER[] = {
     CrossPointSettings::EXTRA_MEDIUM, CrossPointSettings::MEDIUM,   CrossPointSettings::LARGE,
     CrossPointSettings::EXTRA_LARGE,  CrossPointSettings::HUGE_SIZE};
 
+    constexpr uint8_t SD_FONT_RANGE_POINT_SIZES[CrossPointSettings::SD_FONT_SIZE_RANGE_COUNT]
+                                           [CrossPointSettings::SD_FONT_MAX_SIZE_STEPS] = {
+                                               {8, 10, 12},
+                                               {10, 12, 14},
+                                               {14, 15, 16},
+                                               {16, 18, 20},
+                                               {8, 10, 12, 14, 15, 16, 18, 20},
+};
+constexpr uint8_t SD_FONT_RANGE_STEP_COUNTS[CrossPointSettings::SD_FONT_SIZE_RANGE_COUNT] = {3, 3, 3, 3, 8};
+
+uint8_t normalizedSdFontRange(uint8_t range) {
+  return range < CrossPointSettings::SD_FONT_SIZE_RANGE_COUNT ? range : CrossPointSettings::SD_FONT_RANGE_TINY;
+}
+
 bool isReaderFontSizeAvailable(const CrossPointSettings::FONT_SIZE size) {
   switch (size) {
     case CrossPointSettings::TEENSY:
 #ifdef OMIT_TEENSY_FONT
+      return false;
+#else
+      return true;
+#endif
+    case CrossPointSettings::ITTY_BITTY:
+#ifdef OMIT_ITTY_BITTY_FONT
       return false;
 #else
       return true;
@@ -80,20 +116,93 @@ bool isReaderFontSizeAvailable(const CrossPointSettings::FONT_SIZE size) {
 #else
       return true;
 #endif
+    case CrossPointSettings::LARGE:
+#ifdef OMIT_LARGE_FONT
+      return false;
+#else
+      return true;
+#endif
     case CrossPointSettings::HUGE_SIZE:
 #ifdef OMIT_HUGE_FONT
       return false;
 #else
       return true;
 #endif
+    default:
+      return true;
   }
 }
 
 CrossPointSettings::FONT_SIZE firstAvailableReaderFontSize() {
-  for (const CrossPointSettings::FONT_SIZE size : READER_FONT_SIZE_STORAGE_ORDER) {
-    if (isReaderFontSizeAvailable(size)) return size;
+  const auto it =
+      std::find_if(std::begin(READER_FONT_SIZE_STORAGE_ORDER), std::end(READER_FONT_SIZE_STORAGE_ORDER),
+                   [](const CrossPointSettings::FONT_SIZE size) { return isReaderFontSizeAvailable(size); });
+  return (it != std::end(READER_FONT_SIZE_STORAGE_ORDER)) ? *it : CrossPointSettings::LARGE;
+}
+
+int getFallbackReaderFontIdForFamily(const CrossPointSettings::FONT_FAMILY family) {
+  switch (family) {
+    case CrossPointSettings::BOOKERLY:
+#ifndef OMIT_TINY_FONT
+      return BOOKERLY_10_FONT_ID;
+#elif !defined(OMIT_SMALL_FONT)
+      return BOOKERLY_12_FONT_ID;
+#elif !defined(OMIT_MEDIUM_FONT)
+      return BOOKERLY_14_FONT_ID;
+      return BOOKERLY_15_FONT_ID;
+#elif !defined(OMIT_LARGE_FONT)
+      return BOOKERLY_16_FONT_ID;
+#elif !defined(OMIT_XLARGE_FONT)
+      return BOOKERLY_18_FONT_ID;
+#elif !defined(OMIT_HUGE_FONT)
+      return BOOKERLY_20_FONT_ID;
+#elif !defined(OMIT_TEENSY_FONT)
+      return BOOKERLY_8_FONT_ID;
+#else
+#error "No reader fonts enabled for BOOKERLY"
+#endif
+    case CrossPointSettings::BOOKERLAM:
+#ifndef OMIT_TINY_FONT
+      return BOOKERLAM_10_FONT_ID;
+#elif !defined(OMIT_SMALL_FONT)
+      return BOOKERLAM_12_FONT_ID;
+#elif !defined(OMIT_MEDIUM_FONT)
+      return BOOKERLAM_14_FONT_ID;
+      return BOOKERLAM_15_FONT_ID;
+#elif !defined(OMIT_LARGE_FONT)
+      return BOOKERLAM_16_FONT_ID;
+#elif !defined(OMIT_XLARGE_FONT)
+      return BOOKERLAM_18_FONT_ID;
+#elif !defined(OMIT_HUGE_FONT)
+      return BOOKERLAM_20_FONT_ID;
+#elif !defined(OMIT_TEENSY_FONT)
+      return BOOKERLAM_8_FONT_ID;
+#else
+#error "No reader fonts enabled for BOOKERLAM"
+#endif
+    case CrossPointSettings::LEXENDDECA:
+    default:
+#ifndef OMIT_TINY_FONT
+      return LEXENDDECA_10_FONT_ID;
+#elif !defined(OMIT_SMALL_FONT)
+      return LEXENDDECA_12_FONT_ID;
+#elif !defined(OMIT_MEDIUM_FONT)
+      return LEXENDDECA_14_FONT_ID;
+      return LEXENDDECA_15_FONT_ID;
+#elif !defined(OMIT_LARGE_FONT)
+      return LEXENDDECA_16_FONT_ID;
+#elif !defined(OMIT_XLARGE_FONT)
+      return LEXENDDECA_18_FONT_ID;
+#elif !defined(OMIT_HUGE_FONT)
+      return LEXENDDECA_20_FONT_ID;
+#elif !defined(OMIT_TEENSY_FONT)
+      return LEXENDDECA_8_FONT_ID;
+#elif !defined(OMIT_ITTY_BITTY_FONT)
+      return LEXENDDECA_9_FONT_ID;
+#else
+#error "No reader fonts enabled for LEXENDDECA"
+#endif
   }
-  return CrossPointSettings::LARGE;
 }
 
 // Convert legacy front button layout into explicit logical->hardware mapping.
@@ -167,6 +276,8 @@ uint8_t CrossPointSettings::sleepTimeoutEnumToMinutes(const uint8_t legacyValue)
       return 1;
     case SLEEP_5_MIN:
       return 5;
+    case SLEEP_3_MIN:
+      return 3;
     case SLEEP_15_MIN:
       return 15;
     case SLEEP_30_MIN:
@@ -175,6 +286,22 @@ uint8_t CrossPointSettings::sleepTimeoutEnumToMinutes(const uint8_t legacyValue)
     default:
       return 10;
   }
+}
+
+uint8_t CrossPointSettings::sleepScreenStorageToMode(const uint8_t storedValue) {
+  if (storedValue < SLEEP_SCREEN_STORAGE_ORDER_COUNT) {
+    return SLEEP_SCREEN_STORAGE_ORDER[storedValue];
+  }
+  return DARK;
+}
+
+uint8_t CrossPointSettings::sleepScreenModeToStorage(const uint8_t mode) {
+  for (uint8_t storedValue = 0; storedValue < SLEEP_SCREEN_STORAGE_ORDER_COUNT; storedValue++) {
+    if (SLEEP_SCREEN_STORAGE_ORDER[storedValue] == mode) {
+      return storedValue;
+    }
+  }
+  return 0;
 }
 
 bool CrossPointSettings::saveToFile() const {
@@ -262,7 +389,9 @@ bool CrossPointSettings::loadFromBinaryFile() {
   uint8_t settingsRead = 0;
   bool frontButtonMappingRead = false;
   do {
-    readAndValidate(inputFile, sleepScreen, SLEEP_SCREEN_MODE_COUNT);
+    uint8_t storedSleepScreen = sleepScreenModeToStorage(sleepScreen);
+    readAndValidate(inputFile, storedSleepScreen, SLEEP_SCREEN_STORAGE_ORDER_COUNT);
+    sleepScreen = sleepScreenStorageToMode(storedSleepScreen);
     if (++settingsRead >= fileSettingsCount) break;
     serialization::readPod(inputFile, extraParagraphSpacing);
     if (++settingsRead >= fileSettingsCount) break;
@@ -429,6 +558,23 @@ bool CrossPointSettings::verifySleepTimeoutMigrationContract() {
   settings.sleepTimeoutMinutes = originalMinutes;
   return migratedValueDrivesTimeout && runtimeUsesMinutesOnly;
 }
+
+bool CrossPointSettings::verifySleepScreenMigrationContract() {
+  constexpr uint8_t legacyModeCountBeforeMinimal = 8;
+  constexpr uint8_t minimalSleepStorageValue = 8;
+  constexpr uint8_t quickResumeStorageValue = 9;
+  for (uint8_t storedValue = 0; storedValue < legacyModeCountBeforeMinimal; storedValue++) {
+    if (sleepScreenStorageToMode(storedValue) != storedValue) {
+      return false;
+    }
+  }
+
+  return sleepScreenStorageToMode(minimalSleepStorageValue) == MINIMAL_SLEEP &&
+         sleepScreenModeToStorage(MINIMAL_SLEEP) == minimalSleepStorageValue &&
+         sleepScreenStorageToMode(quickResumeStorageValue) == QUICK_RESUME &&
+         sleepScreenModeToStorage(QUICK_RESUME) == quickResumeStorageValue &&
+         sleepScreenStorageToMode(UINT8_MAX) == DARK;
+}
 #endif
 
 int CrossPointSettings::getRefreshFrequency() const {
@@ -463,6 +609,43 @@ uint8_t CrossPointSettings::getStoredReaderFontSize(const FONT_SIZE size) {
   return INVALID_READER_FONT_SIZE;
 }
 
+uint8_t CrossPointSettings::getReaderFontPointSize(const FONT_SIZE size) {
+  switch (size) {
+    case TEENSY:
+      return 8;
+    case TINY:
+      return 10;
+    case SMALL:
+      return 12;
+    case MEDIUM:
+    default:
+      return 14;
+      return 15;
+    case LARGE:
+      return 16;
+    case EXTRA_LARGE:
+      return 18;
+    case HUGE_SIZE:
+      return 20;
+  }
+}
+
+uint8_t CrossPointSettings::getSdFontRangePointSize(uint8_t range, uint8_t step) {
+  range = normalizedSdFontRange(range);
+  const uint8_t stepCount = SD_FONT_RANGE_STEP_COUNTS[range];
+  if (step >= stepCount) step = stepCount - 1;
+  return SD_FONT_RANGE_POINT_SIZES[range][step];
+}
+
+bool CrossPointSettings::isSdFontPointSizeAllowedForRange(const uint8_t pointSize, const uint8_t range) {
+  const uint8_t normalizedRange = normalizedSdFontRange(range);
+  const uint8_t stepCount = SD_FONT_RANGE_STEP_COUNTS[normalizedRange];
+  for (uint8_t i = 0; i < stepCount; i++) {
+    if (SD_FONT_RANGE_POINT_SIZES[normalizedRange][i] == pointSize) return true;
+  }
+  return false;
+}
+
 CrossPointSettings::FONT_SIZE CrossPointSettings::getEffectiveReaderFontSize() const {
   uint8_t stored = 0;
   for (const FONT_SIZE size : READER_FONT_SIZE_STORAGE_ORDER) {
@@ -471,6 +654,10 @@ CrossPointSettings::FONT_SIZE CrossPointSettings::getEffectiveReaderFontSize() c
     stored++;
   }
   return firstAvailableReaderFontSize();
+}
+
+uint8_t CrossPointSettings::getSdFontTargetPointSize() const {
+  return getSdFontRangePointSize(sdFontSizeRange, fontSize);
 }
 
 bool CrossPointSettings::changeReaderFontSize(const bool larger) {
@@ -531,8 +718,10 @@ int CrossPointSettings::getReaderFontId() const {
           return LEXENDDECA_15_FONT_ID;
 #endif
 #ifndef OMIT_LARGE_FONT
+#ifndef OMIT_LARGE_FONT
         case LARGE:
           return LEXENDDECA_16_FONT_ID;
+#endif
 #endif
 #ifndef OMIT_XLARGE_FONT
         case EXTRA_LARGE:
@@ -566,6 +755,7 @@ int CrossPointSettings::getReaderFontId() const {
         case EXTRA_MEDIUM:
           return BOOKERLY_15_FONT_ID;
 #endif
+#ifndef OMIT_LARGE_FONT
 #ifndef OMIT_LARGE_FONT
         case LARGE:
           return BOOKERLY_16_FONT_ID;
@@ -615,9 +805,7 @@ int CrossPointSettings::getReaderFontId() const {
           return BOOKERLAM_20_FONT_ID;
 #endif
       }
-      break;
-    }
-
-  // Luôn có giá trị trả về mặc định để tránh lỗi "-Werror=return-type"
-  return LEXENDDECA_14_FONT_ID;
+      return getFallbackReaderFontIdForFamily(BOOKERLAM);
+  }
+  return getFallbackReaderFontIdForFamily(static_cast<FONT_FAMILY>(fontFamily));
 }
