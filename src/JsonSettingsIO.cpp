@@ -320,6 +320,10 @@ bool JsonSettingsIO::loadSettings(CrossPointSettings& s, const char* json, bool*
     s.language = static_cast<uint8_t>(I18n::languageFromCode(doc["language"].as<const char*>()));
   }
 
+  #ifdef FORCE_DISABLE_EMBEDDED_STYLE
+    s.embeddedStyle = 0;
+  #endif
+
   LOG_DBG("CPS", "Settings loaded from file");
 
   return true;

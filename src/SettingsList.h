@@ -339,8 +339,11 @@ inline std::vector<SettingInfo> getSettingsList(const SdCardFontRegistry* regist
         StrId::STR_PARA_ALIGNMENT, &CrossPointSettings::paragraphAlignment,
         {StrId::STR_JUSTIFY, StrId::STR_ALIGN_LEFT, StrId::STR_CENTER, StrId::STR_ALIGN_RIGHT, StrId::STR_BOOK_S_STYLE},
         "paragraphAlignment", StrId::STR_CAT_READER));
+    
+    #ifndef FORCE_DISABLE_EMBEDDED_STYLE
     add(SettingInfo::Toggle(StrId::STR_EMBEDDED_STYLE, &CrossPointSettings::embeddedStyle, "embeddedStyle",
                             StrId::STR_CAT_READER));
+    #endif
     
     #ifndef FORCE_NO_HYPHENATION
     add(SettingInfo::Toggle(StrId::STR_HYPHENATION, &CrossPointSettings::hyphenationEnabled, "hyphenationEnabled",

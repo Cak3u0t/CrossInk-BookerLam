@@ -463,7 +463,9 @@ bool CrossPointSettings::loadFromBinaryFile() {
     if (++settingsRead >= fileSettingsCount) break;
     serialization::readPod(inputFile, fadingFix);
     if (++settingsRead >= fileSettingsCount) break;
-    serialization::readPod(inputFile, embeddedStyle);
+  #ifndef FORCE_DISABLE_EMBEDDED_STYLE
+    serialization::readPod(inputFile, this->embeddedStyle);
+  #endif
     if (++settingsRead >= fileSettingsCount) break;
   } while (false);
 

@@ -352,8 +352,10 @@ class CrossPointSettings {
   // Sunlight fading compensation
   uint8_t fadingFix = 0;
   // Use book's embedded CSS styles for EPUB rendering (1 = enabled, 0 = disabled)
-  uint8_t embeddedStyle = 1;
- 
+// #ifndef FORCE_DISABLE_EMBEDDED_STYLE
+  uint8_t embeddedStyle = 0;
+// #else
+// #endif 
   // Focus Reading - emphasizes the first part of words with bold
 #ifndef FORCE_NO_BIONIC_READING
   uint8_t bionicReadingEnabled = 0;

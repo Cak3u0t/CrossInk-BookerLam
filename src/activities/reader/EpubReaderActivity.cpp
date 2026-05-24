@@ -61,6 +61,14 @@
   #define _CP_GUIDE_READING SETTINGS.guideReadingEnabled
 #endif
 
+#ifdef FORCE_DISABLE_EMBEDDED_STYLE
+  #define _CP_EMBEDDED_STYLE_VAL 0
+  #define _CP_IGNORE_EMBEDDED_STYLE true
+#else
+  #define _CP_EMBEDDED_STYLE_VAL SETTINGS.embeddedStyle
+  #define _CP_IGNORE_EMBEDDED_STYLE (SETTINGS.embeddedStyle == 0)
+#endif
+
 namespace {
 // pagesPerRefresh now comes from SETTINGS.getRefreshFrequency()
 constexpr unsigned long longPressMenuMs = 600;
@@ -1489,7 +1497,7 @@ void EpubReaderActivity::render(RenderLock&& lock) {
     if (!section->loadSectionFile(SETTINGS.getReaderFontId(), SETTINGS.getReaderLineCompression(),
                                   SETTINGS.extraParagraphSpacing, SETTINGS.forceParagraphIndents,
                                   SETTINGS.paragraphAlignment, viewportWidth, viewportHeight,
-                                  _CP_HYPHENATION, SETTINGS.embeddedStyle, SETTINGS.imageRendering,
+                                  _CP_HYPHENATION, _CP_EMBEDDED_STYLE_VAL, SETTINGS.imageRendering,
                                   _CP_BIONIC_READING, _CP_GUIDE_READING)) {
       LOG_DBG("ERS", "Cache not found, building... (free=%u, maxAlloc=%u)", ESP.getFreeHeap(), ESP.getMaxAllocHeap());
 
@@ -1502,7 +1510,7 @@ void EpubReaderActivity::render(RenderLock&& lock) {
       if (!section->createSectionFile(SETTINGS.getReaderFontId(), SETTINGS.getReaderLineCompression(),
                                       SETTINGS.extraParagraphSpacing, SETTINGS.forceParagraphIndents,
                                       SETTINGS.paragraphAlignment, viewportWidth, viewportHeight,
-                                      _CP_HYPHENATION, SETTINGS.embeddedStyle, SETTINGS.imageRendering,
+                                      _CP_HYPHENATION, _CP_EMBEDDED_STYLE_VAL, SETTINGS.imageRendering,
                                       _CP_BIONIC_READING, _CP_GUIDE_READING, popupFn,
                                       &imagesWereSuppressed, &layoutAbortedForLowMemory)) {
         if (layoutAbortedForLowMemory) {
@@ -1681,7 +1689,7 @@ void EpubReaderActivity::silentIndexNextChapterIfNeeded(const uint16_t viewportW
   if (nextSection.loadSectionFile(SETTINGS.getReaderFontId(), SETTINGS.getReaderLineCompression(),
                                   SETTINGS.extraParagraphSpacing, SETTINGS.forceParagraphIndents,
                                   SETTINGS.paragraphAlignment, viewportWidth, viewportHeight,
-                                  _CP_HYPHENATION, SETTINGS.embeddedStyle, SETTINGS.imageRendering,
+                                  _CP_HYPHENATION, _CP_EMBEDDED_STYLE_VAL, SETTINGS.imageRendering,
                                   _CP_BIONIC_READING, _CP_GUIDE_READING)) {
     return;
   }
@@ -1695,7 +1703,7 @@ void EpubReaderActivity::silentIndexNextChapterIfNeeded(const uint16_t viewportW
   if (!nextSection.createSectionFile(SETTINGS.getReaderFontId(), SETTINGS.getReaderLineCompression(),
                                      SETTINGS.extraParagraphSpacing, SETTINGS.forceParagraphIndents,
                                      SETTINGS.paragraphAlignment, viewportWidth, viewportHeight,
-                                     _CP_HYPHENATION, SETTINGS.embeddedStyle, SETTINGS.imageRendering,
+                                     _CP_HYPHENATION, _CP_EMBEDDED_STYLE_VAL, SETTINGS.imageRendering,
                                      _CP_BIONIC_READING, _CP_GUIDE_READING)) {
     LOG_ERR("ERS", "Failed silent indexing for chapter: %d", nextSpineIndex);
   } else {
@@ -1967,7 +1975,7 @@ void EpubReaderActivity::restoreSavedPosition() {
 bool EpubReaderActivity::drawCurrentPageToBuffer(const std::string& filePath, GfxRenderer& renderer) {
   auto epub = std::make_shared<Epub>(filePath, "/.crosspoint");
   // Load CSS when embeddedStyle is enabled, as createSectionFile may need it to rebuild the cache.
-  if (!epub->load(true, SETTINGS.embeddedStyle == 0)) {
+  if (!epub->load(true, _CP_IGNORE_EMBEDDED_STYLE)) {
     LOG_DBG("SLP", "EPUB: failed to load %s", filePath.c_str());
     return false;
   }
@@ -2009,7 +2017,7 @@ bool EpubReaderActivity::drawCurrentPageToBuffer(const std::string& filePath, Gf
   if (!section->loadSectionFile(SETTINGS.getReaderFontId(), SETTINGS.getReaderLineCompression(),
                                 SETTINGS.extraParagraphSpacing, SETTINGS.forceParagraphIndents,
                                 SETTINGS.paragraphAlignment, viewportWidth, viewportHeight, _CP_HYPHENATION,
-                                SETTINGS.embeddedStyle, SETTINGS.imageRendering, _CP_BIONIC_READING, _CP_GUIDE_READING)) {
+                                _CP_EMBEDDED_STYLE_VAL, SETTINGS.imageRendering, _CP_BIONIC_READING, _CP_GUIDE_READING)) {
     if (!MemoryBudget::hasHeapForOptionalEpubRebuild("SLP", "EPUB sleep-page cache rebuild", spineIndex)) {
       return false;
     }
@@ -2019,7 +2027,7 @@ bool EpubReaderActivity::drawCurrentPageToBuffer(const std::string& filePath, Gf
     if (!section->createSectionFile(SETTINGS.getReaderFontId(), SETTINGS.getReaderLineCompression(),
                                     SETTINGS.extraParagraphSpacing, SETTINGS.forceParagraphIndents,
                                     SETTINGS.paragraphAlignment, viewportWidth, viewportHeight,
-                                    _CP_HYPHENATION, SETTINGS.embeddedStyle, SETTINGS.imageRendering,
+                                    _CP_HYPHENATION, _CP_EMBEDDED_STYLE_VAL, SETTINGS.imageRendering,
                                     _CP_BIONIC_READING, _CP_GUIDE_READING, []() {})) {
       LOG_ERR("SLP", "EPUB: failed to rebuild section cache for spine %d", spineIndex);
       return false;
