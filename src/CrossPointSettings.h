@@ -327,7 +327,13 @@ class CrossPointSettings {
   uint8_t sleepTimeoutMinutes = 10;
   // E-ink refresh frequency (default 15 pages)
   uint8_t refreshFrequency = REFRESH_15;
+
+
+#ifndef FORCE_NO_HYPHENATION
   uint8_t hyphenationEnabled = 0;
+#else
+  static constexpr uint8_t hyphenationEnabled = 0; // Compile-time constant
+#endif
 
   // Reader screen margin settings
   uint8_t screenMargin = 5;
@@ -347,10 +353,20 @@ class CrossPointSettings {
   uint8_t fadingFix = 0;
   // Use book's embedded CSS styles for EPUB rendering (1 = enabled, 0 = disabled)
   uint8_t embeddedStyle = 1;
+ 
   // Focus Reading - emphasizes the first part of words with bold
+#ifndef FORCE_NO_BIONIC_READING
   uint8_t bionicReadingEnabled = 0;
+#else
+  static constexpr uint8_t bionicReadingEnabled = 0;
+#endif
   // Guide Dots - places a middle dot between words to guide the eye
+#ifndef FORCE_NO_GUIDE_READING
   uint8_t guideReadingEnabled = 0;
+#else
+  static constexpr uint8_t guideReadingEnabled = 0;
+#endif
+
   // SD card font family name, including optional range suffix (empty = use built-in fontFamily)
   char sdFontFamilyName[64] = "";
   // Show hidden files/directories (starting with '.') in the file browser (0 = hidden, 1 = show)

@@ -341,8 +341,12 @@ inline std::vector<SettingInfo> getSettingsList(const SdCardFontRegistry* regist
         "paragraphAlignment", StrId::STR_CAT_READER));
     add(SettingInfo::Toggle(StrId::STR_EMBEDDED_STYLE, &CrossPointSettings::embeddedStyle, "embeddedStyle",
                             StrId::STR_CAT_READER));
+    
+    #ifndef FORCE_NO_HYPHENATION
     add(SettingInfo::Toggle(StrId::STR_HYPHENATION, &CrossPointSettings::hyphenationEnabled, "hyphenationEnabled",
                             StrId::STR_CAT_READER));
+    #endif
+
     add(SettingInfo::Toggle(StrId::STR_TEXT_AA, &CrossPointSettings::textAntiAliasing, "textAntiAliasing",
                             StrId::STR_CAT_READER));
     add(SettingInfo::Enum(StrId::STR_IMAGES, &CrossPointSettings::imageRendering,
@@ -352,10 +356,16 @@ inline std::vector<SettingInfo> getSettingsList(const SdCardFontRegistry* regist
                             "extraParagraphSpacing", StrId::STR_CAT_READER));
     add(SettingInfo::Toggle(StrId::STR_FORCE_PARAGRAPH_INDENTS, &CrossPointSettings::forceParagraphIndents,
                             "forceParagraphIndents", StrId::STR_CAT_READER));
+
+    #ifndef FORCE_NO_BIONIC_READING
     add(SettingInfo::Toggle(StrId::STR_BIONIC_READING, &CrossPointSettings::bionicReadingEnabled,
                             "bionicReadingEnabled", StrId::STR_CAT_READER));
+    #endif
+
+    #ifndef FORCE_NO_GUIDE_READING
     add(SettingInfo::Toggle(StrId::STR_GUIDE_READING, &CrossPointSettings::guideReadingEnabled, "guideReadingEnabled",
                             StrId::STR_CAT_READER));
+    #endif
 
     // --- Controls ---
     add(SettingInfo::Enum(StrId::STR_SIDE_BTN_LAYOUT, &CrossPointSettings::sideButtonLayout,

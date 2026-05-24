@@ -421,7 +421,9 @@ bool CrossPointSettings::loadFromBinaryFile() {
     if (++settingsRead >= fileSettingsCount) break;
     readAndValidate(inputFile, longPressButtonBehavior, LONG_PRESS_BUTTON_BEHAVIOR_COUNT);
     if (++settingsRead >= fileSettingsCount) break;
+#ifndef FORCE_NO_HYPHENATION
     serialization::readPod(inputFile, hyphenationEnabled);
+#endif    
     if (++settingsRead >= fileSettingsCount) break;
     {
       std::string usernameStr;
