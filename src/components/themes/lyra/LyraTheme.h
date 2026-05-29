@@ -110,5 +110,5 @@ class LyraTheme : public BaseTheme {
                            bool invertSelectedRows) const;
 
   // Returns nullptr when the icon or requested bitmap size is not available.
-  static const uint8_t* iconForName(UIIcon icon, uint32_t size);
+  // static const uint8_t* iconForName(UIIcon icon, uint32_t size);
 };

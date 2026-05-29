@@ -16,21 +16,21 @@
 #include "RecentBooksStore.h"
 #include "activities/reader/BookReadingStats.h"
 #include "components/UITheme.h"
-#include "components/icons/book.h"
-#include "components/icons/book24.h"
-#include "components/icons/chart.h"
+// #include "components/icons/book.h"
+// #include "components/icons/book24.h"
+// #include "components/icons/chart.h"
 #include "components/icons/cover.h"
-#include "components/icons/file24.h"
-#include "components/icons/folder.h"
-#include "components/icons/folder24.h"
-#include "components/icons/hotspot.h"
-#include "components/icons/image24.h"
-#include "components/icons/library.h"
-#include "components/icons/recent.h"
-#include "components/icons/settings2.h"
-#include "components/icons/text24.h"
-#include "components/icons/transfer.h"
-#include "components/icons/wifi.h"
+// #include "components/icons/file24.h"
+// #include "components/icons/folder.h"
+// #include "components/icons/folder24.h"
+// #include "components/icons/hotspot.h"
+// #include "components/icons/image24.h"
+// #include "components/icons/library.h"
+// #include "components/icons/recent.h"
+// #include "components/icons/settings2.h"
+// #include "components/icons/text24.h"
+// #include "components/icons/transfer.h"
+// #include "components/icons/wifi.h"
 #include "fontIds.h"
 
 // Internal constants
@@ -49,49 +49,6 @@ int centeredRowY(const int rowY, const int rowHeight, const int contentHeight) {
 }
 
 }  // namespace
-
-const uint8_t* LyraTheme::iconForName(UIIcon icon, uint32_t size) {
-  if (size == 24) {
-    switch (icon) {
-      case UIIcon::Folder:
-        return Folder24Icon;
-      case UIIcon::Text:
-        return Text24Icon;
-      case UIIcon::Image:
-        return Image24Icon;
-      case UIIcon::Book:
-        return Book24Icon;
-      case UIIcon::File:
-        return File24Icon;
-      default:
-        return nullptr;
-    }
-  } else if (size == 32) {
-    switch (icon) {
-      case UIIcon::Folder:
-        return FolderIcon;
-      case UIIcon::Book:
-        return BookIcon;
-      case UIIcon::Chart:
-        return ChartIcon;
-      case UIIcon::Recent:
-        return RecentIcon;
-      case UIIcon::Settings:
-        return Settings2Icon;
-      case UIIcon::Transfer:
-        return TransferIcon;
-      case UIIcon::Library:
-        return LibraryIcon;
-      case UIIcon::Wifi:
-        return WifiIcon;
-      case UIIcon::Hotspot:
-        return HotspotIcon;
-      default:
-        return nullptr;
-    }
-  }
-  return nullptr;
-}
 
 void LyraTheme::fillBatteryIcon(const GfxRenderer& renderer, Rect rect, uint16_t percentage) const {
   const bool charging = gpio.isUsbConnected();

@@ -211,7 +211,8 @@ class CrossPointSettings {
     ROUNDEDRAFF = 3,
     LYRA_CAROUSEL = 4,
     MINIMAL = 5,
-    UI_THEME_COUNT = 6
+    FOCUS = 6,
+    UI_THEME_COUNT = 7
   };
   enum RECENT_BOOKS_VIEW { RECENT_BOOKS_LIST = 0, RECENT_BOOKS_GRID = 1, RECENT_BOOKS_VIEW_COUNT };
 
@@ -328,11 +329,10 @@ class CrossPointSettings {
   // E-ink refresh frequency (default 15 pages)
   uint8_t refreshFrequency = REFRESH_15;
 
-
 #ifndef FORCE_NO_HYPHENATION
   uint8_t hyphenationEnabled = 0;
 #else
-  static constexpr uint8_t hyphenationEnabled = 0; // Compile-time constant
+  static constexpr uint8_t hyphenationEnabled = 0;  // Compile-time constant
 #endif
 
   // Reader screen margin settings
@@ -352,11 +352,11 @@ class CrossPointSettings {
   // Sunlight fading compensation
   uint8_t fadingFix = 0;
   // Use book's embedded CSS styles for EPUB rendering (1 = enabled, 0 = disabled)
-// #ifndef FORCE_DISABLE_EMBEDDED_STYLE
+  // #ifndef FORCE_DISABLE_EMBEDDED_STYLE
   uint8_t embeddedStyle = 0;
 // #else
-// #endif 
-  // Focus Reading - emphasizes the first part of words with bold
+// #endif
+// Focus Reading - emphasizes the first part of words with bold
 #ifndef FORCE_NO_BIONIC_READING
   uint8_t bionicReadingEnabled = 0;
 #else
@@ -400,7 +400,8 @@ class CrossPointSettings {
   static constexpr uint8_t SD_FONT_MAX_SIZE_STEPS = 8;
 
   uint16_t getPowerButtonWakeDuration() const {
-    return (shortPwrBtn == CrossPointSettings::SHORT_PWRBTN::SLEEP) ? POWER_BUTTON_WAKE_SHORT_MS : POWER_BUTTON_LONG_PRESS_MS;
+    return (shortPwrBtn == CrossPointSettings::SHORT_PWRBTN::SLEEP) ? POWER_BUTTON_WAKE_SHORT_MS
+                                                                    : POWER_BUTTON_LONG_PRESS_MS;
   }
 
   // Callback to resolve SD card font IDs. Set by SdCardFontSystem::begin().

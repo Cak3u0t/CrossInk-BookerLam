@@ -11,13 +11,14 @@
 #include "BookActions.h"
 #include "FileBrowserActionActivity.h"
 #include "MappedInputManager.h"
+#include "RecentBookProgress.h"
 #include "RecentBooksStore.h"
 #include "activities/util/ConfirmationActivity.h"
 #include "components/UITheme.h"
 #include "fontIds.h"
 
 namespace {
-constexpr size_t MAX_LIST_RECENT_BOOKS = 10;
+constexpr size_t MAX_LIST_RECENT_BOOKS = 8;
 // Hold threshold for the long-press action menu (firmware convention).
 constexpr unsigned long LONG_PRESS_MS = 1000;
 }  // namespace
@@ -49,6 +50,13 @@ void RecentBooksActivity::onEnter() {
 
   // Load data
   loadRecentBooks();
+
+  progressCache.clear();
+  progressCache.reserve(recentBooks.size());
+
+  for (const auto& book : recentBooks) {
+    progressCache.push_back(RecentBookProgress::loadPercent(book));
+  }
 
   selectorIndex = 0;
   requestUpdate();
@@ -237,10 +245,27 @@ void RecentBooksActivity::render(RenderLock&&) {
   if (recentBooks.empty()) {
     renderer.drawText(UI_10_FONT_ID, metrics.contentSidePadding, contentTop + 20, tr(STR_NO_RECENT_BOOKS));
   } else {
+    // std::vector<float> bookProgress;
+    // bookProgress.reserve(recentBooks.size());
+
+    // for (const auto& book : recentBooks) {
+    //   bookProgress.push_back(RecentBookProgress::loadPercent(book));
+    // }
+
     GUI.drawList(
         renderer, Rect{0, contentTop, pageWidth, contentHeight}, recentBooks.size(), selectorIndex,
         [this](int index) { return recentBooks[index].title; }, [this](int index) { return recentBooks[index].author; },
-        [this](int index) { return UITheme::getFileIcon(recentBooks[index].path); });
+        [this](int index) { return UITheme::getFileIcon(recentBooks[index].path); },
+        [this](int index) -> std::string {
+          float p = progressCache[index];
+
+          if (p < 0.0f) return "";
+
+          char buf[16];
+          snprintf(buf, sizeof(buf), "%d%%", static_cast<int>(p + 0.5f));
+
+          return std::string(buf);
+        });
   }
 
   // Help text

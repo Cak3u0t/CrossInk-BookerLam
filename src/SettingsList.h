@@ -280,21 +280,25 @@ inline std::vector<SettingInfo> getSettingsList(const SdCardFontRegistry* regist
         StrId::STR_REFRESH_FREQ, &CrossPointSettings::refreshFrequency,
         {StrId::STR_PAGES_1, StrId::STR_PAGES_5, StrId::STR_PAGES_10, StrId::STR_PAGES_15, StrId::STR_PAGES_30},
         "refreshFrequency", StrId::STR_CAT_DISPLAY));
+
     add(SettingInfo::Enum(StrId::STR_UI_THEME, &CrossPointSettings::uiTheme,
                           {StrId::STR_THEME_CLASSIC, StrId::STR_THEME_LYRA, StrId::STR_THEME_LYRA_EXTENDED,
-                           StrId::STR_THEME_ROUNDEDRAFF, StrId::STR_THEME_LYRA_CAROUSEL, StrId::STR_THEME_MINIMAL},
+                           StrId::STR_THEME_ROUNDEDRAFF, StrId::STR_THEME_LYRA_CAROUSEL, StrId::STR_THEME_MINIMAL,
+                           StrId::STR_THEME_FOCUS},
                           "uiTheme", StrId::STR_CAT_DISPLAY)
             .withEnumRawValues({CrossPointSettings::UI_THEME::CLASSIC, CrossPointSettings::UI_THEME::LYRA,
                                 CrossPointSettings::UI_THEME::LYRA_3_COVERS, CrossPointSettings::UI_THEME::ROUNDEDRAFF,
-                                CrossPointSettings::UI_THEME::LYRA_CAROUSEL, CrossPointSettings::UI_THEME::MINIMAL}));
+                                CrossPointSettings::UI_THEME::LYRA_CAROUSEL, CrossPointSettings::UI_THEME::MINIMAL,
+                                CrossPointSettings::UI_THEME::FOCUS}));
+
     add(SettingInfo::Enum(StrId::STR_RECENT_BOOKS_VIEW, &CrossPointSettings::recentBooksView,
                           {StrId::STR_LIST_VIEW, StrId::STR_GRID_VIEW}, "recentBooksView", StrId::STR_CAT_DISPLAY));
     add(SettingInfo::Toggle(StrId::STR_SUNLIGHT_FADING_FIX, &CrossPointSettings::fadingFix, "fadingFix",
                             StrId::STR_CAT_DISPLAY));
 
-        // --- Reader ---
-        // Built-in font-family entry. Replaced per-call with a registry-aware
-        // version when SD fonts are installed.
+    // --- Reader ---
+    // Built-in font-family entry. Replaced per-call with a registry-aware
+    // version when SD fonts are installed.
     add(SettingInfo::Enum(StrId::STR_FONT_FAMILY, &CrossPointSettings::fontFamily,
                           {
                               StrId::STR_LEXEND_DECA,
@@ -302,53 +306,55 @@ inline std::vector<SettingInfo> getSettingsList(const SdCardFontRegistry* regist
                               StrId::STR_BOOKERLAM,
                           },
                           "fontFamily", StrId::STR_CAT_READER)),
-    add(SettingInfo::Enum(StrId::STR_FONT_SIZE, &CrossPointSettings::fontSize,
-                          {
+        add(SettingInfo::Enum(StrId::STR_FONT_SIZE, &CrossPointSettings::fontSize,
+                              {
 #ifndef OMIT_TINY_FONT
-                              StrId::STR_TINY,
+                                  StrId::STR_TINY,
 #endif
 #ifndef OMIT_SMALL_FONT
-                              StrId::STR_SMALL,
+                                  StrId::STR_SMALL,
 #endif
 #ifndef OMIT_MEDIUM_FONT
-                              StrId::STR_MEDIUM,
-                              StrId::STR_X_MEDIUM,
+                                  StrId::STR_MEDIUM,
+                                  StrId::STR_X_MEDIUM,
 #endif
 #ifndef OMIT_LARGE_FONT
-                              StrId::STR_LARGE,
+                                  StrId::STR_LARGE,
 #endif
 #ifndef OMIT_XLARGE_FONT
-                              StrId::STR_X_LARGE,
+                                  StrId::STR_X_LARGE,
 #endif
 #ifndef OMIT_TEENSY_FONT
-                              StrId::STR_TEENSY,
+                                  StrId::STR_TEENSY,
 #endif
 #ifndef OMIT_HUGE_FONT
-                              StrId::STR_HUGE,
+                                  StrId::STR_HUGE,
 #endif
-                          },
-                          "fontSize", StrId::STR_CAT_READER)),
-    add(SettingInfo::Enum(StrId::STR_LINE_SPACING, &CrossPointSettings::lineSpacing,
-                          {StrId::STR_TIGHT, StrId::STR_NORMAL, StrId::STR_WIDE}, "lineSpacing", StrId::STR_CAT_READER)),
-    add(SettingInfo::Enum(StrId::STR_ORIENTATION, &CrossPointSettings::orientation,
-                          {StrId::STR_PORTRAIT, StrId::STR_LANDSCAPE_CW, StrId::STR_INVERTED, StrId::STR_LANDSCAPE_CCW},
-                          "orientation", StrId::STR_CAT_READER));
+                              },
+                              "fontSize", StrId::STR_CAT_READER)),
+        add(SettingInfo::Enum(StrId::STR_LINE_SPACING, &CrossPointSettings::lineSpacing,
+                              {StrId::STR_TIGHT, StrId::STR_NORMAL, StrId::STR_WIDE}, "lineSpacing",
+                              StrId::STR_CAT_READER)),
+        add(SettingInfo::Enum(
+            StrId::STR_ORIENTATION, &CrossPointSettings::orientation,
+            {StrId::STR_PORTRAIT, StrId::STR_LANDSCAPE_CW, StrId::STR_INVERTED, StrId::STR_LANDSCAPE_CCW},
+            "orientation", StrId::STR_CAT_READER));
     add(SettingInfo::Value(StrId::STR_SCREEN_MARGIN, &CrossPointSettings::screenMargin, {5, 40, 5}, "screenMargin",
                            StrId::STR_CAT_READER));
     add(SettingInfo::Enum(
         StrId::STR_PARA_ALIGNMENT, &CrossPointSettings::paragraphAlignment,
         {StrId::STR_JUSTIFY, StrId::STR_ALIGN_LEFT, StrId::STR_CENTER, StrId::STR_ALIGN_RIGHT, StrId::STR_BOOK_S_STYLE},
         "paragraphAlignment", StrId::STR_CAT_READER));
-    
-    #ifndef FORCE_DISABLE_EMBEDDED_STYLE
+
+#ifndef FORCE_DISABLE_EMBEDDED_STYLE
     add(SettingInfo::Toggle(StrId::STR_EMBEDDED_STYLE, &CrossPointSettings::embeddedStyle, "embeddedStyle",
                             StrId::STR_CAT_READER));
-    #endif
-    
-    #ifndef FORCE_NO_HYPHENATION
+#endif
+
+#ifndef FORCE_NO_HYPHENATION
     add(SettingInfo::Toggle(StrId::STR_HYPHENATION, &CrossPointSettings::hyphenationEnabled, "hyphenationEnabled",
                             StrId::STR_CAT_READER));
-    #endif
+#endif
 
     add(SettingInfo::Toggle(StrId::STR_TEXT_AA, &CrossPointSettings::textAntiAliasing, "textAntiAliasing",
                             StrId::STR_CAT_READER));
@@ -360,15 +366,15 @@ inline std::vector<SettingInfo> getSettingsList(const SdCardFontRegistry* regist
     add(SettingInfo::Toggle(StrId::STR_FORCE_PARAGRAPH_INDENTS, &CrossPointSettings::forceParagraphIndents,
                             "forceParagraphIndents", StrId::STR_CAT_READER));
 
-    #ifndef FORCE_NO_BIONIC_READING
+#ifndef FORCE_NO_BIONIC_READING
     add(SettingInfo::Toggle(StrId::STR_BIONIC_READING, &CrossPointSettings::bionicReadingEnabled,
                             "bionicReadingEnabled", StrId::STR_CAT_READER));
-    #endif
+#endif
 
-    #ifndef FORCE_NO_GUIDE_READING
+#ifndef FORCE_NO_GUIDE_READING
     add(SettingInfo::Toggle(StrId::STR_GUIDE_READING, &CrossPointSettings::guideReadingEnabled, "guideReadingEnabled",
                             StrId::STR_CAT_READER));
-    #endif
+#endif
 
     // --- Controls ---
     add(SettingInfo::Enum(StrId::STR_SIDE_BTN_LAYOUT, &CrossPointSettings::sideButtonLayout,

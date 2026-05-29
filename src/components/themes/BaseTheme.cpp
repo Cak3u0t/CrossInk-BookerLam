@@ -15,6 +15,21 @@
 #include "RecentBooksStore.h"
 #include "activities/reader/BookReadingStats.h"
 #include "components/UITheme.h"
+#include "components/icons/book.h"
+#include "components/icons/book24.h"
+#include "components/icons/chart.h"
+#include "components/icons/cover.h"
+#include "components/icons/file24.h"
+#include "components/icons/folder.h"
+#include "components/icons/folder24.h"
+#include "components/icons/hotspot.h"
+#include "components/icons/image24.h"
+#include "components/icons/library.h"
+#include "components/icons/recent.h"
+#include "components/icons/settings2.h"
+#include "components/icons/text24.h"
+#include "components/icons/transfer.h"
+#include "components/icons/wifi.h"
 #include "fontIds.h"
 
 // Internal constants
@@ -24,6 +39,49 @@ constexpr int homeMarginTop = 30;
 constexpr int subtitleY = 738;
 
 }  // namespace
+
+const uint8_t* BaseTheme::iconForName(UIIcon icon, uint32_t size) {
+  if (size == 24) {
+    switch (icon) {
+      case UIIcon::Folder:
+        return Folder24Icon;
+      case UIIcon::Text:
+        return Text24Icon;
+      case UIIcon::Image:
+        return Image24Icon;
+      case UIIcon::Book:
+        return Book24Icon;
+      case UIIcon::File:
+        return File24Icon;
+      default:
+        return nullptr;
+    }
+  } else if (size == 32) {
+    switch (icon) {
+      case UIIcon::Folder:
+        return FolderIcon;
+      case UIIcon::Book:
+        return BookIcon;
+      case UIIcon::Chart:
+        return ChartIcon;
+      case UIIcon::Recent:
+        return RecentIcon;
+      case UIIcon::Settings:
+        return Settings2Icon;
+      case UIIcon::Transfer:
+        return TransferIcon;
+      case UIIcon::Library:
+        return LibraryIcon;
+      case UIIcon::Wifi:
+        return WifiIcon;
+      case UIIcon::Hotspot:
+        return HotspotIcon;
+      default:
+        return nullptr;
+    }
+  }
+  return nullptr;
+}
 
 void BaseTheme::drawBatteryOutline(const GfxRenderer& renderer, int x, int y, int battWidth, int rectHeight) {
   // Top line
@@ -398,7 +456,7 @@ void BaseTheme::drawSubHeader(const GfxRenderer& renderer, Rect rect, const char
 
   auto truncatedLabel = renderer.truncatedText(
       UI_12_FONT_ID, label, rect.width - BaseMetrics::values.contentSidePadding - rightSpace, EpdFontFamily::REGULAR);
-  renderer.drawText(UI_12_FONT_ID, currentX, rect.y, truncatedLabel.c_str(), true, EpdFontFamily::REGULAR);
+  renderer.drawText(UI_10_FONT_ID, currentX + 32, rect.y + 14, truncatedLabel.c_str(), true, EpdFontFamily::REGULAR);
 }
 
 void BaseTheme::drawTabBar(const GfxRenderer& renderer, const Rect rect, const std::vector<TabInfo>& tabs,
