@@ -238,4 +238,9 @@ class BaseTheme {
   static constexpr int batteryPercentSpacing = 4;
   static void drawBatteryOutline(const GfxRenderer& renderer, int x, int y, int battWidth, int rectHeight);
   static void drawBatteryLightningBolt(const GfxRenderer& renderer, int boltX, int boltY);
+
+  // In src/components/themes/BaseTheme.h, inside the BaseTheme class:
+ protected:
+  // Returns nullptr when the icon or requested bitmap size is not available.
+  static const uint8_t* iconForName(UIIcon icon, uint32_t size);
 };

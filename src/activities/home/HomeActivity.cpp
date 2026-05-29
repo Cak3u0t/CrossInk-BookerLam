@@ -29,6 +29,7 @@
 #include "RecentBookProgress.h"
 #include "RecentBooksStore.h"
 #include "components/UITheme.h"
+#include "components/themes/focus/FocusTheme.h"
 #include "components/themes/lyra/LyraCarouselTheme.h"
 #include "components/themes/minimal/MinimalTheme.h"
 #include "fontIds.h"
@@ -213,6 +214,15 @@ std::vector<HomeMenuEntry> buildMinimalMenuItems(bool hasOpdsServers, bool hasRe
   return items;
 }
 
+// std::vector<HomeMenuEntry> buildFocusMenuItems() {
+//   return {
+//       {tr(STR_BROWSE_FILES), Folder, HomeMenuAction::BrowseFiles},
+//       {tr(STR_FILE_TRANSFER), Transfer, HomeMenuAction::FileTransfer},
+//       {tr(STR_READING_STATS), Chart, HomeMenuAction::ReadingStats},
+//       {tr(STR_SETTINGS_TITLE), Settings, HomeMenuAction::Settings},
+//   };
+// }
+
 std::vector<HomeMenuEntry> buildSelectableHomeMenuItems(bool hasOpdsServers, bool hasReadingStats, bool hasBookmarks,
                                                         bool includeContinueReading) {
   auto items = buildHomeMenuItems(hasOpdsServers, hasReadingStats, hasBookmarks);
@@ -251,6 +261,9 @@ int findMenuActionIndex(const std::vector<HomeMenuEntry>& items, HomeMenuAction 
 
 bool isMinimalTheme() {
   return static_cast<CrossPointSettings::UI_THEME>(SETTINGS.uiTheme) == CrossPointSettings::UI_THEME::MINIMAL;
+}
+bool isFocusTheme() {
+  return static_cast<CrossPointSettings::UI_THEME>(SETTINGS.uiTheme) == CrossPointSettings::UI_THEME::FOCUS;
 }
 
 bool isAnyFrontButtonPressed(const MappedInputManager& mappedInput) {
@@ -368,6 +381,7 @@ int getHomeMenuSelectionOffset(const std::vector<RecentBook>& recentBooks) {
   const auto& metrics = UITheme::getInstance().getMetrics();
   return metrics.homeContinueReadingInMenu ? 0 : static_cast<int>(recentBooks.size());
 }
+
 }  // namespace
 
 // ---------------------------------------------------------------------------
@@ -699,13 +713,18 @@ void HomeActivity::onEnter() {
   }
   updateHighlightedBookContext();
 
+  const int menuOffset = getHomeMenuSelectionOffset(recentBooks);
   if (initialMenuItem != HomeMenuItem::NONE) {
     const bool includeContinueReading = metrics.homeContinueReadingInMenu && !recentBooks.empty();
+    // const auto menuItems = isFocusTheme() ? buildFocusMenuItems()
+    //                                       : buildSelectableHomeMenuItems(hasOpdsServers, hasReadingStats,
+    //                                       hasBookmarks,
+    //                                                                      includeContinueReading);
     const auto menuItems =
         buildSelectableHomeMenuItems(hasOpdsServers, hasReadingStats, hasBookmarks, includeContinueReading);
     const int menuIndex = findMenuActionIndex(menuItems, homeActionForInitialMenuItem(initialMenuItem));
     if (menuIndex >= 0) {
-      selectorIndex = getHomeMenuSelectionOffset(recentBooks) + menuIndex;
+      selectorIndex = menuOffset + menuIndex;
       updateHighlightedBookContext();
     }
   }
@@ -1343,9 +1362,15 @@ void HomeActivity::loop() {
       return;
     }
 
+    const int menuOffset = getHomeMenuSelectionOffset(recentBooks);
+    // auto menuItems = isFocusTheme()
+    //                      ? buildFocusMenuItems()
+    //                      : buildSelectableHomeMenuItems(hasOpdsServers, hasReadingStats, hasBookmarks,
+    //                                                     metrics.homeContinueReadingInMenu && !recentBooks.empty());
     auto menuItems = buildSelectableHomeMenuItems(hasOpdsServers, hasReadingStats, hasBookmarks,
                                                   metrics.homeContinueReadingInMenu && !recentBooks.empty());
-    const int menuSelectedIndex = selectorIndex - getHomeMenuSelectionOffset(recentBooks);
+
+    const int menuSelectedIndex = selectorIndex - menuOffset;
     if (menuSelectedIndex < 0 || menuSelectedIndex >= static_cast<int>(menuItems.size())) {
       return;
     }
@@ -1498,24 +1523,37 @@ void HomeActivity::render(RenderLock&&) {
                           std::bind(&HomeActivity::storeCoverBuffer, this),
                           hasAnyBookStats(currentBookStats) ? &currentBookStats : nullptr, currentBookProgressPercent);
 
+  // auto menuItems = isFocusTheme()
+  //                      ? buildFocusMenuItems()
+  //                      : buildSelectableHomeMenuItems(hasOpdsServers, hasReadingStats, hasBookmarks,
+  //                                                     metrics.homeContinueReadingInMenu && !recentBooks.empty());
   auto menuItems = buildSelectableHomeMenuItems(hasOpdsServers, hasReadingStats, hasBookmarks,
                                                 metrics.homeContinueReadingInMenu && !recentBooks.empty());
-
   const int menuStartY = metrics.homeTopPadding + metrics.homeCoverTileHeight + metrics.homeMenuTopOffset;
   const int menuEndY = pageHeight - metrics.buttonHintsHeight;
   const int menuHeight = std::max(0, menuEndY - menuStartY);
 
-  GUI.drawButtonMenu(
-      renderer, Rect{0, menuStartY, pageWidth, menuHeight}, static_cast<int>(menuItems.size()),
-      selectorIndex - getHomeMenuSelectionOffset(recentBooks),
-      [&menuItems](int index) { return std::string(menuItems[index].label); },
-      [&menuItems](int index) { return menuItems[index].icon; });
+  if (isFocusTheme()) {
+    GUI.drawButtonMenu(
+        renderer, Rect{0, pageHeight - metrics.buttonHintsHeight, pageWidth, metrics.buttonHintsHeight},
+        static_cast<int>(menuItems.size()), selectorIndex - getHomeMenuSelectionOffset(recentBooks),
+        [&menuItems](int index) { return std::string(menuItems[index].label); },
+        [&menuItems](int index) { return menuItems[index].icon; });
+  } else {
+    GUI.drawButtonMenu(
+        renderer, Rect{0, menuStartY, pageWidth, menuHeight}, static_cast<int>(menuItems.size()),
+        selectorIndex - getHomeMenuSelectionOffset(recentBooks),
+        [&menuItems](int index) { return std::string(menuItems[index].label); },
+        [&menuItems](int index) { return menuItems[index].icon; });
+  }
 
   const bool isCarouselTheme =
       static_cast<CrossPointSettings::UI_THEME>(SETTINGS.uiTheme) == CrossPointSettings::UI_THEME::LYRA_CAROUSEL;
   const auto labels = isCarouselTheme ? mappedInput.mapLabels("", tr(STR_SELECT), tr(STR_DIR_LEFT), tr(STR_DIR_RIGHT))
                                       : mappedInput.mapLabels("", tr(STR_SELECT), tr(STR_DIR_UP), tr(STR_DIR_DOWN));
-  GUI.drawButtonHints(renderer, labels.btn1, labels.btn2, labels.btn3, labels.btn4);
+  if (!isFocusTheme()) {
+    GUI.drawButtonHints(renderer, labels.btn1, labels.btn2, labels.btn3, labels.btn4);
+  }
 
   renderer.displayBuffer();
 

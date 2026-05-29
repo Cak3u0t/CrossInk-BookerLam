@@ -1,35 +1,80 @@
 #pragma once
-
-#include "components/themes/lyra/LyraTheme.h"
+#include "components/themes/BaseTheme.h"
 
 namespace FocusMetrics {
-constexpr ThemeMetrics makeValues() {
-  ThemeMetrics v = LyraMetrics::values;
-  v.homeTopPadding = 50;
-  v.homeCoverHeight = 583;
-  v.homeCoverTileHeight = 690;
-  v.homeRecentBooksCount = 1;
-  v.homeContinueReadingInMenu = false;
-  v.homeMenuTopOffset = 0;
-  return v;
+constexpr ThemeMetrics values = {.batteryWidth = 14,
+                                 .batteryHeight = 10,
+                                 .topPadding = 2,
+                                 .batteryBarHeight = 20,
+                                 .headerHeight = 36,
+                                 .verticalSpacing = 10,
+                                 .contentSidePadding = 10,
+                                 .listRowHeight = 42,
+                                 .listWithSubtitleRowHeight = 78,
+                                 .menuRowHeight = 38,
+                                 .menuSpacing = 5,
+                                 .tabSpacing = 32,
+                                 .tabBarHeight = 32,
+                                 .scrollBarWidth = 3,
+                                 .scrollBarRightOffset = 4,
+                                 .homeTopPadding = 30,
+                                 .homeCoverHeight = 520,
+                                 .homeCoverTileHeight = 660,
+                                 .homeRecentBooksCount = 1,
+                                 .homeContinueReadingInMenu = false,
+                                 .homeMenuTopOffset = 10,
+                                 .buttonHintsHeight = 56,
+                                 .sideButtonHintsWidth = 20,
+                                 .progressBarHeight = 10,
+                                 .progressBarMarginTop = 2,
+                                 .statusBarHorizontalMargin = 4,
+                                 .statusBarVerticalMargin = 12,
+                                 .keyboardKeyWidth = 22,
+                                 .keyboardKeyHeight = 34,
+                                 .keyboardKeySpacing = 0,
+                                 .keyboardBottomKeyHeight = 30,
+                                 .keyboardBottomKeySpacing = 4,
+                                 .keyboardBottomAligned = true,
+                                 .keyboardCenteredText = false,
+                                 .keyboardVerticalOffset = -6,
+                                 .keyboardTextFieldWidthPercent = 85,
+                                 .keyboardWidthPercent = 90,
+                                 .keyboardKeyCornerRadius = 4,
+                                 .keyboardFillUnselected = false,
+                                 .keyboardOutlineAllUnselected = true,
+                                 .keyboardDrawSpecialOutlineWhenUnselected = true,
+                                 .keyboardSecondaryLabelRightPadding = 1,
+                                 .keyboardSecondaryLabelTopPadding = 0,
+                                 .keyboardMinArrowHeadSize = 0,
+                                 .popupTopOffsetRatio = 0.15f,
+                                 .popupMarginX = 12,
+                                 .popupMarginY = 10,
+                                 .popupFrameThickness = 1,
+                                 .popupCornerRadius = 4,
+                                 .popupTextBold = true,
+                                 .popupTextInverted = true,
+                                 .popupTextBaselineOffsetY = -2,
+                                 .popupProgressBarHeight = 3,
+                                 .popupProgressDrawOutline = false,
+                                 .popupProgressClampPercent = false,
+                                 .popupProgressFillInverted = true,
+                                 .popupProgressOutlineInverted = true,
+                                 .textFieldHorizontalPadding = 4,
+                                 .textFieldNormalThickness = 1,
+                                 .textFieldCursorThickness = 2,
+                                 .textFieldLineEndOffset = 0};
 }
 
-constexpr ThemeMetrics values = makeValues();
-}  // namespace FocusMetrics
-
-class FocusTheme : public LyraTheme {
+class FocusTheme : public BaseTheme {
  public:
-  static void setHomeButtonHintSelection(int selectedIndex);
-
   void drawHeader(const GfxRenderer& renderer, Rect rect, const char* title,
                   const char* subtitle = nullptr) const override;
-  void drawTabBar(const GfxRenderer& renderer, Rect rect, const std::vector<TabInfo>& tabs,
-                  bool selected) const override;
   void drawList(const GfxRenderer& renderer, Rect rect, int itemCount, int selectedIndex,
                 const std::function<std::string(int index)>& rowTitle,
-                const std::function<std::string(int index)>& rowSubtitle,
-                const std::function<UIIcon(int index)>& rowIcon, const std::function<std::string(int index)>& rowValue,
-                bool highlightValue, const std::function<bool(int index)>& rowDimmed = nullptr,
+                const std::function<std::string(int index)>& rowSubtitle = nullptr,
+                const std::function<UIIcon(int index)>& rowIcon = nullptr,
+                const std::function<std::string(int index)>& rowValue = nullptr, bool highlightValue = false,
+                const std::function<bool(int index)>& rowDimmed = nullptr,
                 const std::function<bool(int index)>& isHeader = nullptr) const override;
   void drawButtonHints(GfxRenderer& renderer, const char* btn1, const char* btn2, const char* btn3, const char* btn4,
                        bool allowInvertedText = false) const override;
@@ -40,6 +85,5 @@ class FocusTheme : public LyraTheme {
   void drawButtonMenu(GfxRenderer& renderer, Rect rect, int buttonCount, int selectedIndex,
                       const std::function<std::string(int index)>& buttonLabel,
                       const std::function<UIIcon(int index)>& rowIcon) const override;
-  bool usesCompactFileBrowserRows() const override { return true; }
-  int compactFileBrowserRowHeight(const GfxRenderer& renderer) const override;
+  void drawTabBar(const GfxRenderer& renderer, Rect rect, const std::vector<TabInfo>& tabs, bool selected) const;
 };

@@ -28,9 +28,10 @@ void renderBookStatsView(GfxRenderer& renderer, const MappedInputManager* mapped
   const int maxTitleWidth = batteryStartX - titleX - metrics.contentSidePadding;
   const std::string truncTitle =
       renderer.truncatedText(UI_12_FONT_ID, tr(STR_READING_STATS), maxTitleWidth, EpdFontFamily::BOLD);
-  renderer.drawText(UI_12_FONT_ID, titleX, titleY, truncTitle.c_str(), true, EpdFontFamily::BOLD);
+  renderer.drawText(UI_12_FONT_ID, titleX + 24, titleY + 8, truncTitle.c_str(), true, EpdFontFamily::BOLD);
+  // renderer.drawCenteredText(UI_12_FONT_ID, titleY, truncTitle.c_str(), true, EpdFontFamily::BOLD);
 
-  int y = metrics.topPadding + metrics.headerHeight + metrics.verticalSpacing;
+  int y = metrics.topPadding + metrics.headerHeight + metrics.verticalSpacing + 20;
 
   const int valueLineH = renderer.getLineHeight(UI_12_FONT_ID);
   const int labelLineH = renderer.getLineHeight(SMALL_FONT_ID);
@@ -95,7 +96,7 @@ void renderBookStatsView(GfxRenderer& renderer, const MappedInputManager* mapped
   drawStatCell(cardX + halfW, halfW, row2Y, buf, tr(STR_STATS_PAGES_PER_MIN));
 
   y += cellH;
-  y += metrics.verticalSpacing;
+  y += metrics.verticalSpacing * 3;
 
   const int screenHeight = renderer.getScreenHeight();
   const int buttonHintsReserve = showButtonHints ? metrics.buttonHintsHeight : 0;
